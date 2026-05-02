@@ -16,8 +16,9 @@ class AnalyticsController extends Controller
         $this->firebase = $firebase;
     }
 
-    public function index()
+    public function index(Request $request)
     {
+        $range = $request->get('range', 7);
         $allOrders = $this->firebase->getOrders();
 
         $completedOrders = $allOrders->filter(function ($order) {
@@ -27,14 +28,16 @@ class AnalyticsController extends Controller
             return $order;
         });
 
-        // 1. Daily Sales (Last 7 Days)
+        // 1. Daily Sales (Based on selected Range)
         $dailySales = [];
-        for ($i = 6; $i >= 0; $i--) {
+        $iterations = (int)$range - 1;
+        for ($i = $iterations; $i >= 0; $i--) {
             $date = Carbon::today()->subDays($i);
-            $dateStr = $date->format('Y-m-d');
-            $dailySales[$dateStr] = $completedOrders->filter(function ($o) use ($dateStr) {
-                return $o['date']->format('Y-m-d') === $dateStr;
-            })->sum('total_amount');
+            $key = $date->format('Y-m-d');
+            $label = $date->format('d M');
+            $dailySales[$label] = round($completedOrders->filter(function ($o) use ($key) {
+                return $o['date']->format('Y-m-d') === $key;
+            })->sum('total_amount'), 2);
         }
 
         // 2. Weekly Sales (Last 4 Weeks)
@@ -43,9 +46,9 @@ class AnalyticsController extends Controller
             $startOfWeek = Carbon::now()->subWeeks($i)->startOfWeek();
             $endOfWeek = Carbon::now()->subWeeks($i)->endOfWeek();
             $label = 'Week ' . $startOfWeek->format('d/m');
-            $weeklySales[$label] = $completedOrders->filter(function ($o) use ($startOfWeek, $endOfWeek) {
+            $weeklySales[$label] = round($completedOrders->filter(function ($o) use ($startOfWeek, $endOfWeek) {
                 return $o['date']->between($startOfWeek, $endOfWeek);
-            })->sum('total_amount');
+            })->sum('total_amount'), 2);
         }
 
         // 3. Monthly Sales (Last 6 Months)
@@ -53,21 +56,70 @@ class AnalyticsController extends Controller
         for ($i = 5; $i >= 0; $i--) {
             $date = Carbon::now()->subMonths($i);
             $monthStr = $date->format('M Y');
-            $monthlySales[$monthStr] = $completedOrders->filter(function ($o) use ($date) {
+            $monthlySales[$monthStr] = round($completedOrders->filter(function ($o) use ($date) {
                 return $o['date']->format('Y-m') === $date->format('Y-m');
-            })->sum('total_amount');
+            })->sum('total_amount'), 2);
         }
 
         // 4. Yearly Sales (Current Year)
-        $yearlySales = $completedOrders->filter(function ($o) {
+        $yearlySales = round($completedOrders->filter(function ($o) {
             return $o['date']->year === Carbon::now()->year;
-        })->sum('total_amount');
+        })->sum('total_amount'), 2);
 
         // 5. Top Sellers Aggregation
         $monthlyTopSellers = $this->getTopSellers($completedOrders->filter(fn($o) => $o['date']->isCurrentMonth()));
         $yearlyTopSellers = $this->getTopSellers($completedOrders->filter(fn($o) => $o['date']->isCurrentYear()));
 
-        return view('admin.analytics', compact('dailySales', 'weeklySales', 'monthlySales', 'yearlySales', 'completedOrders', 'monthlyTopSellers', 'yearlyTopSellers'));
+        return view('admin.analytics', compact('dailySales', 'weeklySales', 'monthlySales', 'yearlySales', 'completedOrders', 'monthlyTopSellers', 'yearlyTopSellers', 'range'));
+    }
+
+    public function export(Request $request)
+    {
+        $allOrders = $this->firebase->getOrders();
+        $categories = $this->firebase->getCategories();
+        
+        $completedOrders = $allOrders->filter(function ($order) {
+            return $order['status'] === 'completed';
+        })->map(function ($order) {
+            $order['date'] = Carbon::parse($order['updated_at']);
+            return $order;
+        });
+
+        // Current Month Stats
+        $thisMonthOrders = $completedOrders->filter(fn($o) => $o['date']->isCurrentMonth());
+        $totalRevenue = round($thisMonthOrders->sum('total_amount'), 2);
+        $totalOrders = $thisMonthOrders->count();
+        $avgOrderValue = $totalOrders > 0 ? round($totalRevenue / $totalOrders, 2) : 0;
+
+        // Category Breakdown
+        $categoryData = [];
+        foreach ($categories as $catId => $cat) {
+            $catRevenue = $thisMonthOrders->sum(function ($order) use ($catId) {
+                return collect($order['items'] ?? [])->where('category_id', $catId)->sum(fn($i) => ($i['price'] ?? 0) * ($i['quantity'] ?? 0));
+            });
+            if ($catRevenue > 0) {
+                $categoryData[$cat['name']] = round($catRevenue, 2);
+            }
+        }
+        arsort($categoryData);
+
+        // Top Sellers
+        $topSellers = $this->getTopSellers($thisMonthOrders);
+
+        $period = Carbon::now()->format('F Y');
+        $title = "Business Performance Report - " . $period;
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.reports.analytics', compact(
+            'totalRevenue', 
+            'totalOrders', 
+            'avgOrderValue', 
+            'categoryData', 
+            'topSellers', 
+            'period', 
+            'title'
+        ));
+
+        return $pdf->download("Business_Report_{$period}.pdf");
     }
 
     protected function getTopSellers($orders)
@@ -83,12 +135,13 @@ class AnalyticsController extends Controller
                 if (!isset($sales[$pId])) {
                     $sales[$pId] = [
                         'name' => $item['name'] ?? 'Unknown Product',
+                        'image' => $item['image'] ?? null,
                         'quantity' => 0,
                         'total' => 0
                     ];
                 }
                 $sales[$pId]['quantity'] += ($item['quantity'] ?? 0);
-                $sales[$pId]['total'] += (($item['price'] ?? 0) * ($item['quantity'] ?? 0));
+                $sales[$pId]['total'] += round(($item['price'] ?? 0) * ($item['quantity'] ?? 0), 2);
             }
         }
 

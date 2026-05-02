@@ -33,7 +33,7 @@
                         <div
                             class="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 bg-gray-50 rounded-2xl overflow-hidden border border-gray-100">
                             @if(!empty($details['image']))
-                                <img src="{{ asset('storage/' . $details['image']) }}" alt="{{ $details['name'] }}"
+                                <img src="{{ str_starts_with($details['image'], 'http') ? $details['image'] : asset('storage/' . $details['image']) }}" alt="{{ $details['name'] }}"
                                     class="w-full h-full object-cover">
                             @else
                                 <div class="w-full h-full flex items-center justify-center text-gray-300">
@@ -69,6 +69,16 @@
                                     </form>
                                 </div>
                             </div>
+
+                            <!-- Per-item Note Input -->
+                            <div class="mt-3">
+                                <input type="text" 
+                                    name="notes[{{ $id }}]" 
+                                    form="order-form"
+                                    placeholder="Add note (e.g. no onions, extra spicy)"
+                                    class="w-full text-xs bg-gray-50 border border-gray-200 rounded-lg py-2 px-3 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 transition"
+                                >
+                            </div>
                         </div>
 
                         <!-- Subtotal (Right Align) -->
@@ -92,21 +102,36 @@
                 </div>
 
                 <!-- Checkout Form -->
-                <form action="{{ route('customer.order.store') }}" method="POST">
+                <form action="{{ route('customer.order.store') }}" method="POST" id="order-form">
                     @csrf
-                    <div class="mb-8">
-                        <label class="block text-gray-400 text-xs font-bold uppercase tracking-widest mb-3"
-                            for="customer_name">Who's this for?</label>
-                        <input
-                            class="w-full bg-gray-800/50 border-2 border-gray-700 rounded-2xl py-4 px-6 text-white text-lg font-bold placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition"
-                            id="customer_name" name="customer_name" type="text" placeholder="Enter your name">
-                        <p class="text-gray-500 text-sm mt-3 flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            Optional but helps us call out your order!
-                        </p>
+                    
+                    <div class="mb-6 bg-gray-800 rounded-2xl p-4 flex items-center justify-between border border-gray-700">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-blue-500/20 text-blue-400 p-2 rounded-xl">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                            </div>
+                            <div>
+                                <span class="text-gray-400 text-xs font-bold uppercase tracking-widest block">Ordering For</span>
+                                <span class="text-white font-black text-lg">Table {{ $tableNumber }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div>
+                            <label class="block text-gray-400 text-xs font-bold uppercase tracking-widest mb-3"
+                                for="customer_name">Who's this for?</label>
+                            <input
+                                class="w-full bg-gray-800/50 border-2 border-gray-700 rounded-2xl py-4 px-6 text-white text-lg font-bold placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition"
+                                id="customer_name" name="customer_name" type="text" placeholder="Enter your name">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-xs font-bold uppercase tracking-widest mb-3"
+                                for="order_note">Extra Information (Optional)</label>
+                            <textarea
+                                class="w-full bg-gray-800/50 border-2 border-gray-700 rounded-2xl py-3 px-6 text-white text-base font-medium placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition resize-none"
+                                id="order_note" name="order_note" rows="2" placeholder="e.g. Bring drinks first, Happy Birthday!"></textarea>
+                        </div>
                     </div>
 
                     <div class="flex flex-col sm:flex-row gap-4">

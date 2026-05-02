@@ -15,6 +15,21 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+
+                    @if(Auth::user()->role === 'admin')
+                        <x-nav-link :href="route('admin.categories.index')" :active="request()->routeIs('admin.categories.*')">
+                            {{ __('Categories') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.products.index')" :active="request()->routeIs('admin.products.*')">
+                            {{ __('Products') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.analytics')" :active="request()->routeIs('admin.analytics')">
+                            {{ __('Analytics') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.reviews.index')" :active="request()->routeIs('admin.reviews.*')">
+                            {{ __('Reviews') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 

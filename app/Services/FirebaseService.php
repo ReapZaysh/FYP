@@ -3,16 +3,20 @@
 namespace App\Services;
 
 use Kreait\Firebase\Contract\Database;
+use Kreait\Firebase\Contract\Storage;
 use Illuminate\Support\Str;
 
 class FirebaseService
 {
     protected $database;
+    protected $storage;
 
-    public function __construct(Database $database)
+    public function __construct(Database $database, Storage $storage)
     {
         $this->database = $database;
+        $this->storage = $storage;
     }
+
 
     // --- Users ---
 
@@ -132,5 +136,84 @@ class FirebaseService
                 'status' => $status,
                 'updated_at' => now()->toIso8601String(),
             ]);
+    }
+
+    // --- Reviews ---
+
+    public function getReviews($productId)
+    {
+        $data = $this->database->getReference('reviews/' . $productId)->getValue();
+        return $data ? collect($data)->filter()->sortByDesc('created_at') : collect([]);
+    }
+
+    public function saveReview($productId, $data)
+    {
+        $reviewCode = 'REV-' . strtoupper(Str::random(5));
+        $data['code'] = $reviewCode;
+        $data['created_at'] = now()->toIso8601String();
+        
+        $this->database->getReference('reviews/' . $productId . '/' . $reviewCode)->set($data);
+        return $reviewCode;
+    }
+
+    public function getAllReviews()
+    {
+        $data = $this->database->getReference('reviews')->getValue();
+        $allReviews = collect([]);
+        
+        if ($data && (is_array($data) || is_object($data))) {
+            foreach ($data as $productId => $reviews) {
+                if ($reviews && (is_array($reviews) || is_object($reviews))) {
+                    foreach ($reviews as $code => $review) {
+                        $review['product_id'] = $productId;
+                        $review['code'] = $code;
+                        $allReviews->push($review);
+                    }
+                }
+            }
+        }
+        
+        return $allReviews->sortByDesc('created_at');
+    }
+    
+    public function deleteReview($productId, $reviewCode)
+    {
+        $this->database->getReference('reviews/' . $productId . '/' . $reviewCode)->remove();
+    }
+
+    // --- Storage ---
+
+    public function uploadImage($file, $pathPrefix = 'products')
+    {
+        $bucket = $this->storage->getBucket();
+        $filename = $pathPrefix . '/' . Str::uuid() . '.' . $file->getClientOriginalExtension();
+        
+        $bucket->upload(
+            fopen($file->getPathname(), 'r'),
+            [
+                'name' => $filename,
+                'predefinedAcl' => 'publicRead' // Makes the file publicly accessible
+            ]
+        );
+
+        // Return the public URL
+        $bucketName = $bucket->name();
+        return "https://firebasestorage.googleapis.com/v0/b/{$bucketName}/o/" . urlencode($filename) . "?alt=media";
+    }
+
+    public function deleteImage($url)
+    {
+        if (empty($url) || !str_contains($url, 'firebasestorage.googleapis.com')) {
+            return;
+        }
+
+        // Extract the path from the URL
+        $bucketName = $this->storage->getBucket()->name();
+        $pattern = "/https:\/\/firebasestorage\.googleapis\.com\/v0\/b\/{$bucketName}\/o\/(.*?)\?alt=media/";
+        
+        if (preg_match($pattern, $url, $matches)) {
+            $path = urldecode($matches[1]);
+            $this->storage->getBucket()->object($path)->delete();
+        }
     }
 }

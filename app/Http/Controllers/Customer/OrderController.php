@@ -23,7 +23,8 @@ class OrderController extends Controller
         foreach ($cart as $id => $details) {
             $total += $details['price'] * $details['quantity'];
         }
-        return view('customer.cart', compact('cart', 'total'));
+        $tableNumber = session('table_number', 'Counter');
+        return view('customer.cart', compact('cart', 'total', 'tableNumber'));
     }
 
     public function addToCart(Request $request, $id)
@@ -46,11 +47,22 @@ class OrderController extends Controller
                 "name" => $product['name'],
                 "quantity" => $quantity,
                 "price" => $product['price'],
+                "category_id" => $product['category_id'] ?? null,
                 "image" => $product['image_path'] ?? ''
             ];
         }
 
         session()->put('cart', $cart);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            $totalCount = array_sum(array_column($cart, 'quantity'));
+            return response()->json([
+                'success' => true,
+                'message' => $product['name'] . ' added to cart!',
+                'cart_count' => $totalCount
+            ]);
+        }
+
         return redirect()->back()->with('success', $product['name'] . ' added to cart!');
     }
 
@@ -92,14 +104,17 @@ class OrderController extends Controller
         }
 
         $orderReference = strtoupper(Str::random(8));
+        $tableNumber = session('table_number', 'Counter');
 
         $items = [];
         foreach ($cart as $id => $details) {
             $items[] = [
                 'product_id' => $id,
+                'category_id' => $details['category_id'] ?? null,
                 'name' => $details['name'],
                 'quantity' => $details['quantity'],
                 'price' => (float) $details['price'],
+                'image' => $details['image'] ?? null,
                 'note' => $request->input("notes.$id")
             ];
 
@@ -113,7 +128,9 @@ class OrderController extends Controller
 
         $orderData = [
             'reference' => $orderReference,
+            'table_number' => $tableNumber,
             'customer_name' => $request->input('customer_name', 'Guest'),
+            'order_note' => $request->input('order_note'),
             'total_amount' => (float) $total,
             'status' => 'submitted',
             'items' => $items,

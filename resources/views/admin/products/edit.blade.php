@@ -1,96 +1,108 @@
-<x-app-layout>
+<x-admin-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Edit Product') }}
-        </h2>
+        <nav class="flex text-sm text-gray-500 gap-2 items-center">
+            <a href="{{ route('dashboard') }}" class="hover:text-premium-brown">Dashboard</a>
+            <span>/</span>
+            <a href="{{ route('admin.products.index') }}" class="hover:text-premium-brown">Products</a>
+            <span>/</span>
+            <span class="text-premium-brown font-medium">Edit Product</span>
+        </nav>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <form method="POST" action="{{ route('admin.products.update', $id) }}"
-                        enctype="multipart/form-data">
-                        @csrf
-                        @method('PUT')
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <div class="mb-4">
-                                    <label class="block text-gray-700 text-sm font-bold mb-2" for="name">Name</label>
-                                    <input
-                                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                        id="name" name="name" type="text" value="{{ $product['name'] }}" required>
-                                </div>
-                                <div class="mb-4">
-                                    <label class="block text-gray-700 text-sm font-bold mb-2"
-                                        for="category_id">Category</label>
-                                    <select
-                                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                        id="category_id" name="category_id" required>
-                                        <option value="">Select Category</option>
-                                        @foreach($categories as $catId => $category)
-                                            <option value="{{ $catId }}" {{ $product['category_id'] == $catId ? 'selected' : '' }}>{{ $category['name'] }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="mb-4">
-                                    <label class="block text-gray-700 text-sm font-bold mb-2" for="price">Price
-                                        (RM)</label>
-                                    <input
-                                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                        id="price" name="price" type="number" step="0.01" value="{{ $product['price'] }}"
-                                        required>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="mb-4">
-                                    <label class="block text-gray-700 text-sm font-bold mb-2"
-                                        for="description">Description</label>
-                                    <textarea
-                                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                        id="description" name="description"
-                                        rows="4">{{ $product['description'] ?? '' }}</textarea>
-                                </div>
-                                <div class="mb-4">
-                                    <label class="block text-gray-700 text-sm font-bold mb-2" for="image">Image (Leave
-                                        blank to keep current)</label>
-                                    @if(!empty($product['image_path']))
-                                        <div class="mb-2">
-                                            <img src="{{ asset('storage/' . $product['image_path']) }}" alt="Current Image"
-                                                class="h-20 w-20 object-cover rounded">
-                                        </div>
-                                    @endif
-                                    <input
-                                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                        id="image" name="image" type="file">
-                                </div>
-                                <div class="mb-4">
-                                    <label class="flex items-center">
-                                        <input type="checkbox" name="is_available" class="form-checkbox" {{ !empty($product['is_available']) ? 'checked' : '' }}>
-                                        <span class="ml-2 text-gray-700">Available</span>
-                                    </label>
-                                </div>
-                                <div class="mb-4">
-                                    <label class="flex items-center">
-                                        <input type="checkbox" name="is_featured" class="form-checkbox" {{ !empty($product['is_featured']) ? 'checked' : '' }}>
-                                        <span class="ml-2 text-gray-700">Featured</span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
+    <div class="max-w-4xl mx-auto space-y-6">
+        <div>
+            <h1 class="font-serif text-3xl text-gray-900">Edit Product</h1>
+            <p class="text-gray-500">Updating {{ $product['name'] }}</p>
+        </div>
 
-                        <div class="flex items-center justify-end mt-4">
-                            <a href="{{ route('admin.products.index') }}"
-                                class="text-gray-600 hover:text-gray-900 mr-4">Cancel</a>
-                            <button
-                                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                                type="submit">
-                                Update Product
-                            </button>
+        <div class="bg-white rounded-3xl shadow-sm border border-gray-50 p-8">
+            <form method="POST" action="{{ route('admin.products.update', $id) }}" enctype="multipart/form-data" class="space-y-8">
+                @csrf
+                @method('PUT')
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2" for="name">Product Name</label>
+                            <input
+                                class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-premium-brown/20 focus:border-premium-brown transition-all"
+                                id="name" name="name" type="text" value="{{ $product['name'] }}" required>
                         </div>
-                    </form>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2" for="category_id">Category</label>
+                            <select
+                                class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-premium-brown/20 focus:border-premium-brown transition-all appearance-none"
+                                id="category_id" name="category_id" required>
+                                <option value="">Select Category</option>
+                                @foreach($categories as $catId => $category)
+                                    <option value="{{ $catId }}" {{ $product['category_id'] == $catId ? 'selected' : '' }}>{{ $category['name'] }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2" for="price">Price (RM)</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400 font-bold">RM</span>
+                                <input
+                                    class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-premium-brown/20 focus:border-premium-brown transition-all"
+                                    id="price" name="price" type="number" step="0.01" value="{{ $product['price'] }}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2" for="description">Description</label>
+                            <textarea
+                                class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-premium-brown/20 focus:border-premium-brown transition-all"
+                                id="description" name="description" rows="4">{{ $product['description'] ?? '' }}</textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2" for="image">Product Image</label>
+                            <div class="flex gap-4">
+                                @if(!empty($product['image_path']))
+                                    <img id="imagePreview" src="{{ str_starts_with($product['image_path'], 'http') ? $product['image_path'] : asset('storage/' . $product['image_path']) }}" 
+                                         class="w-24 h-24 rounded-2xl object-cover bg-gray-100 border border-gray-100">
+                                @else
+                                    <img id="imagePreview" src="" class="hidden w-24 h-24 rounded-2xl object-cover bg-gray-100 border border-gray-100">
+                                @endif
+                                <label class="flex-1 flex flex-col items-center justify-center h-24 border-2 border-gray-100 border-dashed rounded-2xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+                                    <div class="flex flex-col items-center justify-center pt-2 pb-3">
+                                        <svg class="w-6 h-6 mb-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                                        <p class="text-[10px] text-gray-500">Change image</p>
+                                    </div>
+                                    <input id="image" name="image" type="file" class="hidden" accept="image/*" onchange="if(this.files[0]) { let preview = document.getElementById('imagePreview'); preview.src = window.URL.createObjectURL(this.files[0]); preview.classList.remove('hidden'); }" />
+                                </label>
+                            </div>
+                        </div>
+                        <div class="flex gap-6 pt-2">
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <div class="relative">
+                                    <input type="checkbox" name="is_available" class="sr-only peer" {{ !empty($product['is_available']) ? 'checked' : '' }}>
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-premium-brown"></div>
+                                </div>
+                                <span class="text-sm font-bold text-gray-600 group-hover:text-gray-900 transition-colors">Available</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <div class="relative">
+                                    <input type="checkbox" name="is_featured" class="sr-only peer" {{ !empty($product['is_featured']) ? 'checked' : '' }}>
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-400"></div>
+                                </div>
+                                <span class="text-sm font-bold text-gray-600 group-hover:text-gray-900 transition-colors">Featured</span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
-            </div>
+
+                <div class="flex items-center justify-end gap-4 pt-8 border-t border-gray-50">
+                    <a href="{{ route('admin.products.index') }}"
+                        class="text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors">Cancel</a>
+                    <button
+                        class="bg-premium-brown hover:bg-premium-brown/90 text-white font-bold py-3 px-10 rounded-2xl shadow-lg shadow-premium-brown/20 transition-all flex items-center gap-2"
+                        type="submit">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        Update Product
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
-</x-app-layout>
+</x-admin-layout>

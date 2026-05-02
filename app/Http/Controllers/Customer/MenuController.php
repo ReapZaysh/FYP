@@ -16,11 +16,25 @@ class MenuController extends Controller
         $this->firebase = $firebase;
     }
 
-    public function index()
+    public function index($table = null)
     {
-        // Fetch all categories and products from Firebase
+        if ($table) {
+            session(['table_number' => $table]);
+        }
+
+        // Fetch all categories, products, and reviews from Firebase
         $categories = $this->firebase->getCategories();
         $allProducts = $this->firebase->getProducts();
+        $allReviews = $this->firebase->getAllReviews()->groupBy('product_id');
+
+        // Attach reviews and average rating to products
+        $allProducts = $allProducts->map(function ($product, $id) use ($allReviews) {
+            $productReviews = $allReviews->get($id, collect([]));
+            $product['reviews'] = $productReviews->values()->toArray();
+            $product['review_count'] = $productReviews->count();
+            $product['average_rating'] = $productReviews->count() > 0 ? round($productReviews->avg('rating'), 1) : 0;
+            return $product;
+        });
 
         // Group products by category and filter only available ones
         $categoriesWithProducts = $categories->map(function ($category, $id) use ($allProducts) {

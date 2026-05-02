@@ -51,8 +51,8 @@ class ProductController extends Controller
         ];
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('products', 'public');
-            $data['image_path'] = $path;
+            $url = $this->firebase->uploadImage($request->file('image'));
+            $data['image_path'] = $url;
         }
 
         $id = $this->firebase->saveProduct(null, $data);
@@ -98,10 +98,15 @@ class ProductController extends Controller
 
         if ($request->hasFile('image')) {
             if (!empty($product['image_path'])) {
-                Storage::disk('public')->delete($product['image_path']);
+                // Determine if it's a local file or firebase url
+                if (str_starts_with($product['image_path'], 'http')) {
+                    $this->firebase->deleteImage($product['image_path']);
+                } else {
+                    Storage::disk('public')->delete($product['image_path']);
+                }
             }
-            $path = $request->file('image')->store('products', 'public');
-            $data['image_path'] = $path;
+            $url = $this->firebase->uploadImage($request->file('image'));
+            $data['image_path'] = $url;
         }
 
         $this->firebase->saveProduct($id, $data);
@@ -113,7 +118,11 @@ class ProductController extends Controller
     {
         $product = $this->firebase->getProduct($id);
         if ($product && !empty($product['image_path'])) {
-            Storage::disk('public')->delete($product['image_path']);
+            if (str_starts_with($product['image_path'], 'http')) {
+                $this->firebase->deleteImage($product['image_path']);
+            } else {
+                Storage::disk('public')->delete($product['image_path']);
+            }
         }
 
         $this->firebase->deleteProduct($id);
