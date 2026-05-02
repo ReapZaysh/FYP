@@ -23,9 +23,9 @@ Route::get('/cart', [CustomerOrderController::class, 'cart'])->name('customer.ca
 Route::post('/cart/add/{product}', [CustomerOrderController::class, 'addToCart'])->name('customer.cart.add');
 Route::post('/cart/remove/{product}', [CustomerOrderController::class, 'removeFromCart'])->name('customer.cart.remove');
 Route::delete('/cart/clear', [CustomerOrderController::class, 'clearCart'])->name('customer.cart.clear');
-Route::post('/order', [CustomerOrderController::class, 'store'])->name('customer.order.store');
+Route::post('/order', [CustomerOrderController::class, 'store'])->middleware('throttle:5,1')->name('customer.order.store');
 Route::get('/track/{reference}', [CustomerOrderController::class, 'track'])->name('customer.track');
-Route::post('/reviews/{product}', [CustomerReviewController::class, 'store'])->name('customer.reviews.store');
+Route::post('/reviews/{product}', [CustomerReviewController::class, 'store'])->middleware('throttle:3,1')->name('customer.reviews.store');
 
 // Dashboard Redirection
 Route::get('/dashboard', function () {
