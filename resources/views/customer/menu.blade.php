@@ -31,7 +31,7 @@
             formData.append('quantity', this.qty);
 
             try {
-                const response = await fetch(`{{ url('cart/add') }}/${this.selectedProduct.id}`, {
+                const response = await fetch(`/cart/add/${this.selectedProduct.id}`, {
                     method: 'POST',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
@@ -361,7 +361,7 @@
                         <!-- Review Form -->
                         <div class="bg-gray-50 rounded-xl p-4 mb-6 border border-gray-100">
                             <h4 class="font-bold text-gray-900 mb-3 text-sm">Leave a Review</h4>
-                            <form :action="'{{ url('reviews') }}/' + selectedProduct.id" method="POST">
+                            <form :action="'/reviews/' + selectedProduct.id" method="POST">
                                 @csrf
                                 <div class="mb-3" x-data="{ rating: 0, hoverRating: 0 }">
                                     <label class="block text-xs font-bold text-gray-700 mb-1">Rating</label>
