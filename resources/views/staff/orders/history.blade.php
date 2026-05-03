@@ -46,7 +46,7 @@
                         class="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-premium-brown/20 focus:border-premium-brown transition-all text-sm appearance-none"
                         onchange="this.form.submit()">
                         <option value="all" {{ request('status') === 'all' ? 'selected' : '' }}>All Status</option>
-                        <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed</option>
+                        <option value="paid" {{ request('status') === 'paid' ? 'selected' : '' }}>Paid</option>
                         <option value="canceled" {{ request('status') === 'canceled' ? 'selected' : '' }}>Canceled</option>
                     </select>
                 </div>
@@ -155,15 +155,12 @@
                                 </td>
                                 <td class="px-8 py-5">
                                     @php
-                                        $statusStyles = [
-                                            'completed' => 'bg-emerald-50 text-emerald-600',
-                                            'canceled' => 'bg-rose-50 text-rose-600',
-                                            'default' => 'bg-gray-50 text-gray-600'
-                                        ];
-                                        $style = $statusStyles[$order['status']] ?? $statusStyles['default'];
+                                        $isPaid = ($order['payment_status'] ?? '') === 'paid';
+                                        $badgeClass = $isPaid ? 'bg-emerald-50 text-emerald-600' : ($order['status'] === 'canceled' ? 'bg-rose-50 text-rose-600' : 'bg-gray-50 text-gray-400');
+                                        $badgeLabel = $isPaid ? 'Paid' : ($order['status'] === 'canceled' ? 'Canceled' : ucwords(str_replace('_', ' ', $order['status'])));
                                     @endphp
-                                    <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider {{ $style }}">
-                                        {{ $order['status'] }}
+                                    <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest {{ $badgeClass }}">
+                                        {{ $badgeLabel }}
                                     </span>
                                 </td>
                                 <td class="px-8 py-5 text-right">

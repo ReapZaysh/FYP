@@ -126,9 +126,9 @@ class OrderController extends Controller
     {
         $allOrders = $this->firebase->getOrders();
 
-        // 1. Filter for archived orders (completed/canceled)
+        // 1. Filter for archived orders (paid/canceled)
         $history = $allOrders->filter(function ($order) {
-            return in_array($order['status'], ['completed', 'canceled']);
+            return ($order['payment_status'] ?? '') === 'paid' || ($order['status'] ?? '') === 'canceled';
         });
 
         // 2. Apply Search Filter by Reference Code
@@ -139,10 +139,13 @@ class OrderController extends Controller
             });
         }
 
-        // 3. Apply Status Filter (Completed vs Canceled)
+        // 3. Apply Status Filter (Paid vs Canceled)
         if ($request->filled('status') && $request->status !== 'all') {
             $status = $request->status;
             $history = $history->filter(function ($order) use ($status) {
+                if ($status === 'paid') {
+                    return ($order['payment_status'] ?? '') === 'paid';
+                }
                 return ($order['status'] ?? '') === $status;
             });
         }

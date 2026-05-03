@@ -24,7 +24,7 @@ class DashboardController extends Controller
         $categories = $this->firebase->getCategories();
 
         $completedOrders = $allOrders->filter(function ($order) {
-            return ($order['status'] ?? '') === 'completed';
+            return ($order['payment_status'] ?? '') === 'paid';
         })->map(function ($order) {
             $order['date'] = Carbon::parse($order['updated_at']);
             return $order;

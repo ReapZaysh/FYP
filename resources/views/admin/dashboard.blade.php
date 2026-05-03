@@ -37,7 +37,7 @@
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                 </div>
                 <div class="flex-1">
-                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Orders</p>
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Paid Orders</p>
                     <h3 class="text-2xl font-bold text-gray-900">{{ $stats['orders']['value'] }}</h3>
                     <div class="flex items-center gap-1 mt-1">
                         <span class="text-xs font-bold {{ $stats['orders']['trend'] === 'up' ? 'text-emerald-500' : 'text-rose-500' }}">
@@ -154,10 +154,14 @@
                                     <td class="px-8 py-4 text-sm text-gray-500 font-bold">{{ count($order['items'] ?? []) }}</td>
                                     <td class="px-8 py-4 text-sm text-gray-900 font-bold">RM {{ number_format($order['total_amount'], 2) }}</td>
                                     <td class="px-8 py-4">
-                                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider
-                                            {{ ($order['status'] ?? '') === 'completed' ? 'bg-emerald-100 text-emerald-600' : 
-                                               (($order['status'] ?? '') === 'submitted' ? 'bg-blue-100 text-blue-600' : 'bg-orange-100 text-orange-600') }}">
-                                            {{ $order['status'] ?? 'Pending' }}
+                                        @php
+                                            $isPaid = ($order['payment_status'] ?? '') === 'paid';
+                                            $badgeClass = $isPaid ? 'bg-emerald-100 text-emerald-600' : 
+                                                         (($order['status'] ?? '') === 'submitted' ? 'bg-blue-100 text-blue-600' : 'bg-orange-100 text-orange-600');
+                                            $badgeLabel = $isPaid ? 'Paid' : ucwords($order['status'] ?? 'Pending');
+                                        @endphp
+                                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider {{ $badgeClass }}">
+                                            {{ $badgeLabel }}
                                         </span>
                                     </td>
                                     <td class="px-8 py-4 text-xs text-gray-400">{{ \Carbon\Carbon::parse($order['updated_at'])->diffForHumans() }}</td>
