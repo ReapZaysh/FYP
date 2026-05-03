@@ -24,6 +24,39 @@
             </div>
         @endif
 
+        <!-- Filters & Search -->
+        <div class="bg-white rounded-3xl shadow-sm border border-gray-50 p-6">
+            <form action="{{ route('admin.products.index') }}" method="GET" class="flex flex-col md:flex-row gap-4">
+                <div class="flex-1 relative">
+                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center">
+                        <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </span>
+                    <input type="text" name="search" value="{{ request('search') }}"
+                        class="w-full pl-11 pr-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-premium-brown/20 focus:border-premium-brown transition-all text-sm"
+                        placeholder="Search product name...">
+                </div>
+                <div class="w-full md:w-64">
+                    <select name="category" onchange="this.form.submit()"
+                        class="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-premium-brown/20 focus:border-premium-brown transition-all text-sm appearance-none">
+                        <option value="all">All Categories</option>
+                        @foreach($categories as $id => $category)
+                            <option value="{{ $id }}" {{ request('category') == $id ? 'selected' : '' }}>
+                                {{ $category['name'] }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <button type="submit" class="px-8 py-2.5 bg-gray-900 text-white font-bold rounded-xl hover:bg-gray-800 transition-all text-sm">
+                    Filter
+                </button>
+                @if(request()->has('search') || (request()->has('category') && request()->category !== 'all'))
+                    <a href="{{ route('admin.products.index') }}" class="px-4 py-2.5 bg-gray-100 text-gray-500 hover:text-gray-900 rounded-xl flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </a>
+                @endif
+            </form>
+        </div>
+
         <div class="bg-white rounded-3xl shadow-sm border border-gray-50 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left">

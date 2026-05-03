@@ -17,10 +17,26 @@ class ProductController extends Controller
         $this->firebase = $firebase;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $products = $this->firebase->getProducts();
+        $products = collect($this->firebase->getProducts());
         $categories = $this->firebase->getCategories();
+
+        // Apply search filter
+        if ($request->filled('search')) {
+            $search = strtolower($request->search);
+            $products = $products->filter(function ($product) use ($search) {
+                return str_contains(strtolower($product['name'] ?? ''), $search);
+            });
+        }
+
+        // Apply category filter
+        if ($request->filled('category') && $request->category !== 'all') {
+            $category = $request->category;
+            $products = $products->filter(function ($product) use ($category) {
+                return ($product['category_id'] ?? '') === $category;
+            });
+        }
 
         return view('admin.products.index', compact('products', 'categories'));
     }
