@@ -89,6 +89,18 @@ class OrderController extends Controller
     }
 
     /**
+     * Display a printable receipt for a specific order.
+     */
+    public function receipt($reference)
+    {
+        $order = $this->firebase->getOrder($reference);
+        if (!$order) {
+            abort(404);
+        }
+        return view('staff.orders.receipt', compact('order'));
+    }
+
+    /**
      * View the History of archived (completed/canceled) orders.
      * Includes search, status filtering, and date range filtering.
      */

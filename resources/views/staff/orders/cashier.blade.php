@@ -122,18 +122,27 @@
                         </div>
 
                         {{-- Mark as Paid Button --}}
-                        <form action="{{ route('staff.orders.markAsPaid', $order['reference']) }}" method="POST"
-                              onsubmit="return confirm('Confirm payment of RM {{ number_format($order['total_amount'], 2) }} for Order #{{ $order['reference'] }}?')">
-                            @csrf
-                            @method('PATCH')
-                            <button type="submit"
-                                class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black py-4 px-6 rounded-2xl shadow-lg shadow-emerald-500/20 transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        <div class="flex flex-col gap-2">
+                            <a href="{{ route('staff.orders.receipt', $order['reference']) }}" target="_blank"
+                               class="w-full border-2 border-gray-200 hover:border-gray-400 text-gray-600 hover:text-gray-900 font-bold py-3 px-6 rounded-2xl transition-all flex items-center justify-center gap-2 text-sm">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
                                 </svg>
-                                Mark as Paid
-                            </button>
-                        </form>
+                                Print Receipt
+                            </a>
+                            <form action="{{ route('staff.orders.markAsPaid', $order['reference']) }}" method="POST"
+                                  onsubmit="return confirm('Confirm payment of RM {{ number_format($order['total_amount'], 2) }} for Order #{{ $order['reference'] }}?')">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit"
+                                    class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black py-4 px-6 rounded-2xl shadow-lg shadow-emerald-500/20 transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                    </svg>
+                                    Mark as Paid
+                                </button>
+                            </form>
+                        </div>
 
                     </div>
                 @endforeach
