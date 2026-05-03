@@ -5,9 +5,9 @@
     :class="sidebarOpen ? 'w-64 translate-x-0' : 'w-20 -translate-x-full lg:translate-x-0'"
 >
     <!-- Brand -->
-    <div class="h-24 flex items-center px-6 border-b border-gray-50 overflow-hidden shrink-0">
-        <div class="flex items-center gap-3 transition-all duration-300" :class="!sidebarOpen && 'lg:justify-center lg:w-full'">
-            <img src="{{ asset('images/logo.png') }}" class="w-10 h-10 shrink-0" alt="Logo">
+    <div class="h-24 flex items-center border-b border-gray-50 overflow-hidden shrink-0 transition-all duration-300" :class="sidebarOpen ? 'px-6' : 'px-0 justify-center'">
+        <div class="flex items-center gap-3 transition-all duration-300" :class="!sidebarOpen && 'justify-center'">
+            <img src="{{ asset('images/logo.png') }}" class="w-10 h-10 object-contain shrink-0" alt="Logo">
             <span class="font-serif text-2xl tracking-tight text-gray-900 whitespace-nowrap overflow-hidden" 
                   x-show="sidebarOpen" x-transition:enter.duration.300ms>BOSSKU</span>
         </div>
