@@ -138,6 +138,15 @@ class FirebaseService
             ]);
     }
 
+    public function updateOrderPayment($reference, $paymentStatus)
+    {
+        $this->database->getReference('orders/' . $reference)
+            ->update([
+                'payment_status' => $paymentStatus,
+                'paid_at' => now()->toIso8601String(),
+            ]);
+    }
+
     // --- Reviews ---
 
     public function getReviews($productId)

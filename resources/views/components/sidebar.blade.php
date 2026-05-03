@@ -23,6 +23,7 @@
         @else
             {{-- Staff Menu: Focused primarily on real-time order management --}}
             <x-sidebar-item href="{{ route('staff.orders.index') }}" icon="dashboard" label="Dashboard" :active="request()->routeIs('staff.orders.index')" />
+            <x-sidebar-item href="{{ route('staff.orders.cashier') }}" icon="cashier" label="Cashier" :active="request()->routeIs('staff.orders.cashier')" />
             <x-sidebar-item href="{{ route('staff.orders.history') }}" icon="history" label="Order History" :active="request()->routeIs('staff.orders.history')" />
         @endif
     </nav>

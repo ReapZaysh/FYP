@@ -60,6 +60,35 @@ class OrderController extends Controller
     }
 
     /**
+     * Display the Cashier view — shows all completed orders awaiting payment.
+     */
+    public function cashier()
+    {
+        $allOrders = $this->firebase->getOrders();
+
+        // Only show orders that are completed but not yet paid
+        $pendingPayment = $allOrders->filter(function ($order) {
+            return $order['status'] === 'completed'
+                && ($order['payment_status'] ?? 'unpaid') !== 'paid';
+        })->sortBy('updated_at');
+
+        $totalPending = $pendingPayment->sum('total_amount');
+
+        return view('staff.orders.cashier', compact('pendingPayment', 'totalPending'));
+    }
+
+    /**
+     * Mark a specific order as paid.
+     */
+    public function markAsPaid($reference)
+    {
+        $this->firebase->updateOrderPayment($reference, 'paid');
+
+        return redirect()->back()
+            ->with('success', 'Order #' . $reference . ' has been marked as paid.');
+    }
+
+    /**
      * View the History of archived (completed/canceled) orders.
      * Includes search, status filtering, and date range filtering.
      */

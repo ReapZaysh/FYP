@@ -2,12 +2,13 @@
     <div class="max-w-7xl mx-auto px-4 py-8" 
          x-data="{ 
             status: '{{ $order['status'] }}',
+            payment_status: '{{ $order['payment_status'] ?? 'unpaid' }}',
             statuses: ['submitted', 'in_progress', 'completed'],
             get currentStatusIndex() {
                 return this.statuses.indexOf(this.status);
             }
          }"
-         @status-updated.window="status = $event.detail.status">
+         @status-updated.window="status = $event.detail.status; payment_status = $event.detail.payment_status">
         
         <div class="bg-white shadow-lg rounded-lg overflow-hidden border border-gray-100 p-6 text-center">
 
@@ -75,6 +76,21 @@
             </div>
 
             <div class="mt-8 flex flex-col items-center gap-4">
+
+                {{-- Payment Status Banners --}}
+                <template x-if="status === 'completed' && payment_status !== 'paid'">
+                    <div class="w-full p-4 bg-amber-50 border border-amber-200 rounded-2xl text-center">
+                        <p class="text-amber-700 font-bold text-lg">🍽️ Your food is ready!</p>
+                        <p class="text-amber-600 text-sm mt-1">Please proceed to the counter to pay.</p>
+                    </div>
+                </template>
+                <template x-if="payment_status === 'paid'">
+                    <div class="w-full p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-center">
+                        <p class="text-emerald-700 font-bold text-lg">✅ Payment Confirmed!</p>
+                        <p class="text-emerald-600 text-sm mt-1">Thank you for dining with us. See you again!</p>
+                    </div>
+                </template>
+
                 <a href="{{ route('customer.menu') }}" class="text-blue-500 hover:text-blue-800 font-semibold">Place New Order</a>
                 
                 <!-- Live Indicator -->
@@ -139,7 +155,10 @@
             // Dispatch a global event that Alpine.js is listening for (@status-updated.window)
             // This allows the UI to update smoothly without a full page reload
             window.dispatchEvent(new CustomEvent('status-updated', { 
-                detail: { status: data.status } 
+                detail: { 
+                    status: data.status,
+                    payment_status: data.payment_status ?? 'unpaid'
+                } 
             }));
 
             // If the status has actually changed from what's on the page, trigger a visual "ping" animation
