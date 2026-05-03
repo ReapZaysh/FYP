@@ -72,7 +72,7 @@
                                         <span class="font-black text-gray-900">{{ $item['quantity'] }}x</span>
                                         {{ $item['name'] }}
                                     </span>
-                                    <span class="text-gray-500 font-medium">RM {{ number_format($item['price'] * $item['quantity'], 2) }}</span>
+                                    <span class="text-gray-500 font-medium">RM {{ number_format(($item['price'] ?? 0) * ($item['quantity'] ?? 1), 2) }}</span>
                                 </div>
                             @endforeach
                         </div>
