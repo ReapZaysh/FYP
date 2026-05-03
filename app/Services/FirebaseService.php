@@ -144,6 +144,7 @@ class FirebaseService
             ->update([
                 'payment_status' => $paymentStatus,
                 'paid_at' => now()->toIso8601String(),
+                'updated_at' => now()->toIso8601String(),
             ]);
     }
 

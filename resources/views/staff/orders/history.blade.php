@@ -100,7 +100,7 @@
                 <form action="{{ route('staff.orders.report') }}" method="GET" class="flex flex-wrap items-center gap-4">
                     <select name="status" class="px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-premium-brown/20 appearance-none">
                         <option value="all">All Archived</option>
-                        <option value="completed" selected>Completed Only</option>
+                        <option value="paid" selected>Paid Only</option>
                         <option value="canceled">Canceled Only</option>
                     </select>
                     <select name="type" class="px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-premium-brown/20 appearance-none">

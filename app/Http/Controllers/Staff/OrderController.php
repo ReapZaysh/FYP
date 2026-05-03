@@ -217,17 +217,24 @@ class OrderController extends Controller
         $reportData = $allOrders->filter(function ($order) use ($startDate, $endDate, $request) {
             $orderDate = \Carbon\Carbon::parse($order['updated_at']);
             $matchesDate = $orderDate->between($startDate, $endDate);
-            $status = $request->get('status', 'completed');
-            $matchesStatus = ($status === 'all') 
-                ? in_array($order['status'], ['completed', 'canceled']) 
-                : $order['status'] === $status;
+            
+            $status = $request->get('status', 'paid');
+            
+            if ($status === 'all') {
+                $matchesStatus = ($order['payment_status'] ?? '') === 'paid' || ($order['status'] ?? '') === 'canceled';
+            } elseif ($status === 'paid') {
+                $matchesStatus = ($order['payment_status'] ?? '') === 'paid';
+            } else {
+                $matchesStatus = ($order['status'] ?? '') === $status;
+            }
 
             return $matchesDate && $matchesStatus;
         })->sortBy('updated_at');
 
         // Append status to report title for clarity
-        if ($request->get('status') && $request->status !== 'all') {
-            $title .= " (" . ucfirst($request->status) . ")";
+        $reportStatus = $request->get('status', 'paid');
+        if ($reportStatus !== 'all') {
+            $title .= " (" . ucfirst($reportStatus) . ")";
         } else {
             $title .= " (All Archived)";
         }
