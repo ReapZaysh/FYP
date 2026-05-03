@@ -78,6 +78,23 @@ class OrderController extends Controller
     }
 
     /**
+     * Display the Paid Orders view — shows all orders that have been paid.
+     */
+    public function paidOrders()
+    {
+        $allOrders = $this->firebase->getOrders();
+
+        // Only show orders that are marked as paid
+        $paidOrders = $allOrders->filter(function ($order) {
+            return ($order['payment_status'] ?? 'unpaid') === 'paid';
+        })->sortByDesc('paid_at'); // Show most recent payments first
+
+        $totalPaid = $paidOrders->sum('total_amount');
+
+        return view('staff.orders.paid', compact('paidOrders', 'totalPaid'));
+    }
+
+    /**
      * Mark a specific order as paid.
      */
     public function markAsPaid($reference)

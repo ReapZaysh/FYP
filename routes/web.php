@@ -55,6 +55,7 @@ Route::middleware(['auth'])->prefix('staff')->name('staff.')->middleware('staff'
     Route::get('/history', [StaffOrderController::class, 'history'])->name('orders.history');
     Route::get('/report', [StaffOrderController::class, 'generateReport'])->name('orders.report');
     Route::get('/cashier', [StaffOrderController::class, 'cashier'])->name('orders.cashier');
+    Route::get('/paid-orders', [StaffOrderController::class, 'paidOrders'])->name('orders.paid');
     Route::patch('/orders/{reference}/pay', [StaffOrderController::class, 'markAsPaid'])->name('orders.markAsPaid');
     Route::get('/orders/{reference}/receipt', [StaffOrderController::class, 'receipt'])->name('orders.receipt');
 });

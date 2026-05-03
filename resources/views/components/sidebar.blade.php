@@ -18,12 +18,14 @@
             <x-sidebar-item href="{{ route('admin.categories.index') }}" icon="categories" label="Categories" :active="request()->routeIs('admin.categories.*')" />
             <x-sidebar-item href="{{ route('admin.products.index') }}" icon="products" label="Products" :active="request()->routeIs('admin.products.*')" />
             <x-sidebar-item href="{{ route('admin.analytics') }}" icon="analytics" label="Analytics" :active="request()->routeIs('admin.analytics')" />
+            <x-sidebar-item href="{{ route('staff.orders.paid') }}" icon="orders" label="Paid Orders" :active="request()->routeIs('staff.orders.paid')" />
             <x-sidebar-item href="{{ route('staff.orders.history') }}" icon="history" label="Order History" :active="request()->routeIs('staff.orders.history')" />
             <x-sidebar-item href="{{ route('admin.reviews.index') }}" icon="reviews" label="Reviews" :active="request()->routeIs('admin.reviews.*')" />
         @else
             {{-- Staff Menu: Focused primarily on real-time order management --}}
             <x-sidebar-item href="{{ route('staff.orders.index') }}" icon="dashboard" label="Dashboard" :active="request()->routeIs('staff.orders.index')" />
             <x-sidebar-item href="{{ route('staff.orders.cashier') }}" icon="cashier" label="Cashier" :active="request()->routeIs('staff.orders.cashier')" />
+            <x-sidebar-item href="{{ route('staff.orders.paid') }}" icon="orders" label="Paid Orders" :active="request()->routeIs('staff.orders.paid')" />
             <x-sidebar-item href="{{ route('staff.orders.history') }}" icon="history" label="Order History" :active="request()->routeIs('staff.orders.history')" />
         @endif
     </nav>
