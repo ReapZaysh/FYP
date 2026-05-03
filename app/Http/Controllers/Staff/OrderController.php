@@ -85,7 +85,8 @@ class OrderController extends Controller
         $this->firebase->updateOrderPayment($reference, 'paid');
 
         return redirect()->back()
-            ->with('success', 'Order #' . $reference . ' has been marked as paid.');
+            ->with('success', 'Order #' . $reference . ' has been marked as paid.')
+            ->with('print_receipt', $reference);
     }
 
     /**
