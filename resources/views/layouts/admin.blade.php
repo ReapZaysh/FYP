@@ -37,10 +37,13 @@
         <!-- Main Content -->
         <div class="flex-1 flex flex-col min-w-0">
             <!-- Top Nav -->
-            <header class="h-20 flex items-center justify-between px-8 bg-transparent">
+            <header class="h-20 flex items-center justify-between px-8 bg-transparent sticky top-0 z-40 backdrop-blur-sm">
                 <div class="flex items-center gap-4">
-                    <button @click="sidebarOpen = !sidebarOpen" class="p-2 hover:bg-gray-200 rounded-lg lg:hidden">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    <button @click="sidebarOpen = !sidebarOpen" class="p-2.5 bg-white border border-gray-100 text-gray-500 hover:text-premium-brown hover:bg-gray-50 rounded-xl shadow-sm transition-all">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path x-show="sidebarOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                            <path x-show="!sidebarOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path>
+                        </svg>
                     </button>
                     <div>
                         @if(isset($header))
