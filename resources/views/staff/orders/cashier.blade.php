@@ -7,7 +7,7 @@
         </nav>
     </x-slot>
 
-    <div class="space-y-6">
+    <div class="space-y-6" x-data="{ search: '' }">
         <div class="flex justify-between items-center">
             <div>
                 <h1 class="font-serif text-3xl text-gray-900">Cashier</h1>
@@ -36,6 +36,28 @@
             </div>
         </div>
 
+        {{-- Live Search Bar --}}
+        <div class="relative">
+            <span class="absolute inset-y-0 left-4 flex items-center text-gray-400">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+            </span>
+            <input
+                x-model="search"
+                type="text"
+                placeholder="Search by table number or reference (e.g. Table 3, XYA92B)..."
+                class="w-full pl-12 pr-10 py-4 bg-white border border-gray-100 rounded-2xl shadow-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-premium-brown/30 focus:border-premium-brown transition"
+            >
+            <template x-if="search !== ''">
+                <button @click="search = ''" class="absolute inset-y-0 right-4 flex items-center text-gray-400 hover:text-gray-600 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </template>
+        </div>
+
         {{-- Order Cards --}}
         @if($pendingPayment->isEmpty())
             <div class="p-16 bg-white rounded-3xl border-2 border-dashed border-gray-100 text-center">
@@ -50,7 +72,12 @@
         @else
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 @foreach($pendingPayment as $id => $order)
-                    <div class="bg-white rounded-3xl shadow-sm border border-gray-50 p-6 flex flex-col gap-4 hover:shadow-md transition-all">
+                    <div class="bg-white rounded-3xl shadow-sm border border-gray-50 p-6 flex flex-col gap-4 hover:shadow-md transition-all"
+                         x-show="search === '' || 
+                                 '{{ strtolower($order['table_number'] ?? '') }}'.includes(search.toLowerCase()) || 
+                                 '{{ strtolower($order['reference'] ?? '') }}'.includes(search.toLowerCase()) ||
+                                 ('table ' + '{{ strtolower($order['table_number'] ?? '') }}').includes(search.toLowerCase())"
+                         x-transition>
 
                         {{-- Order Header --}}
                         <div class="flex justify-between items-start">
