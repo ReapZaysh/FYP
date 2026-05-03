@@ -87,6 +87,17 @@
                                 @if(!empty($order['table_number']))
                                     <span class="text-xs font-bold text-blue-500">Table {{ $order['table_number'] }}</span>
                                 @endif
+                                @if(!empty($order['created_at']))
+                                    <div class="flex items-center gap-1 mt-1">
+                                        <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <span class="text-[11px] text-gray-400 font-medium" title="{{ \Carbon\Carbon::parse($order['created_at'])->setTimezone('Asia/Kuala_Lumpur')->format('d M Y, h:i A') }}">
+                                            {{ \Carbon\Carbon::parse($order['created_at'])->setTimezone('Asia/Kuala_Lumpur')->diffForHumans() }}
+                                            &bull; {{ \Carbon\Carbon::parse($order['created_at'])->setTimezone('Asia/Kuala_Lumpur')->format('h:i A') }}
+                                        </span>
+                                    </div>
+                                @endif
                             </div>
                             <span class="text-[10px] font-bold text-emerald-600 px-3 py-1 bg-emerald-50 rounded-full">Completed</span>
                         </div>
