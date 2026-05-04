@@ -130,6 +130,7 @@ class OrderController extends Controller
             'reference' => $orderReference,
             'table_number' => $tableNumber,
             'customer_name' => $request->input('customer_name', 'Guest'),
+            'customer_id' => auth()->check() ? auth()->id() : null,
             'order_note' => $request->input('order_note'),
             'total_amount' => (float) $total,
             'status' => 'submitted',
