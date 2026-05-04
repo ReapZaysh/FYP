@@ -19,6 +19,11 @@ Route::get('/', function () {
 });
 
 // Customer Routes
+Route::get('/c/login', [\App\Http\Controllers\Customer\Auth\LoginController::class, 'create'])->name('customer.login');
+Route::post('/c/login', [\App\Http\Controllers\Customer\Auth\LoginController::class, 'store']);
+Route::get('/c/register', [\App\Http\Controllers\Customer\Auth\RegisterController::class, 'create'])->name('customer.register');
+Route::post('/c/register', [\App\Http\Controllers\Customer\Auth\RegisterController::class, 'store']);
+
 Route::get('/menu/{table?}', [MenuController::class, 'index'])->name('customer.menu');
 Route::get('/cart', [CustomerOrderController::class, 'cart'])->name('customer.cart');
 Route::post('/cart/add/{product}', [CustomerOrderController::class, 'addToCart'])->name('customer.cart.add');

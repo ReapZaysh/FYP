@@ -123,7 +123,7 @@
                                 <label class="block text-gray-400 text-xs font-bold uppercase tracking-widest"
                                     for="customer_name">Who's this for?</label>
                                 @guest
-                                    <a href="{{ route('login') }}" class="text-blue-400 text-xs font-bold hover:text-blue-300 transition">
+                                    <a href="{{ route('customer.login', ['redirect' => route('customer.cart')]) }}" class="text-blue-400 text-xs font-bold hover:text-blue-300 transition">
                                         Login to earn points &rarr;
                                     </a>
                                 @else
