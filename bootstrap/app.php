@@ -16,6 +16,13 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => \App\Http\Middleware\IsAdmin::class,
             'staff' => \App\Http\Middleware\IsStaff::class,
         ]);
+        
+        $middleware->redirectGuestsTo(function ($request) {
+            if ($request->is('admin/*') || $request->is('staff/*') || $request->is('admin') || $request->is('staff')) {
+                return route('login');
+            }
+            return route('customer.login');
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -20,6 +20,7 @@
             <x-sidebar-item href="{{ route('dashboard') }}" icon="dashboard" label="Dashboard" :active="request()->routeIs('dashboard') || request()->routeIs('admin.dashboard')" />
             <x-sidebar-item href="{{ route('admin.categories.index') }}" icon="categories" label="Categories" :active="request()->routeIs('admin.categories.*')" />
             <x-sidebar-item href="{{ route('admin.products.index') }}" icon="products" label="Products" :active="request()->routeIs('admin.products.*')" />
+            <x-sidebar-item href="{{ route('admin.rewards.index') }}" icon="rewards" label="Rewards" :active="request()->routeIs('admin.rewards.*')" />
             <x-sidebar-item href="{{ route('admin.analytics') }}" icon="analytics" label="Analytics" :active="request()->routeIs('admin.analytics')" />
             <x-sidebar-item href="{{ route('staff.orders.paid') }}" icon="orders" label="Paid Orders" :active="request()->routeIs('staff.orders.paid')" />
             <x-sidebar-item href="{{ route('staff.orders.history') }}" icon="history" label="Order History" :active="request()->routeIs('staff.orders.history')" />
