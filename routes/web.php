@@ -26,6 +26,8 @@ Route::delete('/cart/clear', [CustomerOrderController::class, 'clearCart'])->nam
 Route::post('/order', [CustomerOrderController::class, 'store'])->middleware('throttle:5,1')->name('customer.order.store');
 Route::get('/track/{reference}', [CustomerOrderController::class, 'track'])->name('customer.track');
 Route::post('/reviews/{product}', [CustomerReviewController::class, 'store'])->middleware('throttle:3,1')->name('customer.reviews.store');
+Route::get('/rewards', function() { return "Rewards Page Coming Soon"; })->name('customer.rewards');
+Route::get('/my-profile', function() { return "Profile Page Coming Soon"; })->name('customer.profile');
 
 // Dashboard Redirection
 Route::get('/dashboard', function () {
