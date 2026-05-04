@@ -119,11 +119,26 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                         <div>
-                            <label class="block text-gray-400 text-xs font-bold uppercase tracking-widest mb-3"
-                                for="customer_name">Who's this for?</label>
+                            <div class="flex justify-between items-end mb-3">
+                                <label class="block text-gray-400 text-xs font-bold uppercase tracking-widest"
+                                    for="customer_name">Who's this for?</label>
+                                @guest
+                                    <a href="{{ route('login') }}" class="text-blue-400 text-xs font-bold hover:text-blue-300 transition">
+                                        Login to earn points &rarr;
+                                    </a>
+                                @else
+                                    <span class="text-emerald-400 text-xs font-bold flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        Earning Points
+                                    </span>
+                                @endguest
+                            </div>
                             <input
                                 class="w-full bg-gray-800/50 border-2 border-gray-700 rounded-2xl py-4 px-6 text-white text-lg font-bold placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition"
-                                id="customer_name" name="customer_name" type="text" placeholder="Enter your name">
+                                id="customer_name" name="customer_name" type="text" 
+                                placeholder="Enter your name"
+                                value="{{ auth()->check() ? auth()->user()->name : '' }}"
+                                {{ auth()->check() ? 'readonly' : 'required' }}>
                         </div>
                         <div>
                             <label class="block text-gray-400 text-xs font-bold uppercase tracking-widest mb-3"

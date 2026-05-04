@@ -27,22 +27,38 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, \App\Services\FirebaseService $firebase): RedirectResponse
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'username' => ['required', 'string', 'max:255', 'unique:' . User::class],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+            'username' => ['required', 'string', 'max:255'], // Removed unique:users rule since we use Firebase
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $user = User::create([
+        // Check if email or username already exists in Firebase
+        $existingUsers = $firebase->getUserByEmail($request->email);
+        if ($existingUsers) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'email' => ['This email is already registered.'],
+            ]);
+        }
+
+        $userId = (string) \Illuminate\Support\Str::uuid();
+        $userData = [
+            'id' => $userId,
             'name' => $request->name,
             'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'customer', // Ensure new registrations are customers
-        ]);
+            'role' => 'customer',
+            'loyalty_points' => 0,
+            'created_at' => now()->toIso8601String(),
+        ];
+
+        $firebase->saveUser($userId, $userData);
+
+        $user = new \Illuminate\Auth\GenericUser($userData);
 
         event(new Registered($user));
 
