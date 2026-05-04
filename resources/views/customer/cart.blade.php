@@ -149,6 +149,23 @@
                         </div>
                     </div>
 
+                    @auth
+                        @if($vouchers->count() > 0)
+                        <div class="mb-8 p-5 bg-emerald-500/10 border-2 border-emerald-500/30 rounded-2xl">
+                            <label class="block text-emerald-400 text-xs font-bold uppercase tracking-widest mb-3 flex items-center gap-2" for="voucher_id">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path></svg>
+                                Apply a Reward Voucher
+                            </label>
+                            <select id="voucher_id" name="voucher_id" class="w-full bg-gray-800/50 border-2 border-gray-700 rounded-xl py-3 px-4 text-white text-base font-medium focus:outline-none focus:border-emerald-500 transition appearance-none">
+                                <option value="">-- Don't use a voucher this time --</option>
+                                @foreach($vouchers as $voucher)
+                                    <option value="{{ $voucher['id'] }}">{{ $voucher['reward_name'] }} (Redeemed {{ \Carbon\Carbon::parse($voucher['created_at'])->format('d M') }})</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        @endif
+                    @endauth
+
                     <div class="flex flex-col sm:flex-row gap-4">
                         <a href="{{ route('customer.menu') }}"
                             class="flex-1 bg-gray-800 hover:bg-gray-700 text-white py-5 px-8 rounded-2xl text-lg font-black text-center transition active:scale-95">

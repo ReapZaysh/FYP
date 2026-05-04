@@ -24,7 +24,15 @@ class OrderController extends Controller
             $total += $details['price'] * $details['quantity'];
         }
         $tableNumber = session('table_number', 'Counter');
-        return view('customer.cart', compact('cart', 'total', 'tableNumber'));
+
+        $vouchers = collect([]);
+        if (auth()->check()) {
+            $vouchers = $this->firebase->getVouchers(auth()->id())->filter(function($v) {
+                return !($v['is_used'] ?? false);
+            });
+        }
+
+        return view('customer.cart', compact('cart', 'total', 'tableNumber', 'vouchers'));
     }
 
     public function addToCart(Request $request, $id)
@@ -126,12 +134,32 @@ class OrderController extends Controller
             }
         }
 
+        $orderNote = $request->input('order_note');
+        
+        // Handle Voucher application
+        $voucherId = $request->input('voucher_id');
+        if (auth()->check() && $voucherId) {
+            $userId = auth()->id();
+            $vouchers = $this->firebase->getVouchers($userId);
+            $appliedVoucher = $vouchers->firstWhere('id', $voucherId);
+            
+            if ($appliedVoucher && !($appliedVoucher['is_used'] ?? false)) {
+                // Mark voucher as used
+                $this->firebase->markVoucherAsUsed($userId, $voucherId);
+                
+                // Append to order note for staff to see
+                $rewardName = $appliedVoucher['reward_name'] ?? 'Reward';
+                $voucherNote = "[VOUCHER APPLIED: " . strtoupper($rewardName) . "]";
+                $orderNote = $orderNote ? $voucherNote . "\n" . $orderNote : $voucherNote;
+            }
+        }
+
         $orderData = [
             'reference' => $orderReference,
             'table_number' => $tableNumber,
             'customer_name' => $request->input('customer_name', 'Guest'),
             'customer_id' => auth()->check() ? auth()->id() : null,
-            'order_note' => $request->input('order_note'),
+            'order_note' => $orderNote,
             'total_amount' => (float) $total,
             'status' => 'submitted',
             'items' => $items,

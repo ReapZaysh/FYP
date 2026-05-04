@@ -33,7 +33,10 @@ Route::post('/order', [CustomerOrderController::class, 'store'])->middleware('th
 
 Route::get('/track/{reference}', [CustomerOrderController::class, 'track'])->name('customer.track');
 Route::post('/reviews/{product}', [CustomerReviewController::class, 'store'])->middleware('throttle:3,1')->name('customer.reviews.store');
-Route::get('/rewards', function() { return "Rewards Page Coming Soon"; })->name('customer.rewards');
+
+Route::get('/rewards', [\App\Http\Controllers\Customer\RewardController::class, 'index'])->name('customer.rewards');
+Route::post('/rewards/redeem/{id}', [\App\Http\Controllers\Customer\RewardController::class, 'redeem'])->middleware('auth')->name('customer.rewards.redeem');
+
 Route::get('/my-profile', [CustomerProfileController::class, 'index'])->middleware('auth')->name('customer.profile');
 
 // Dashboard Redirection
@@ -51,6 +54,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::resource('categories', CategoryController::class);
     Route::resource('products', ProductController::class);
+    Route::resource('rewards', \App\Http\Controllers\Admin\RewardController::class)->except(['create', 'show', 'edit']);
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
     Route::get('/analytics/export', [AnalyticsController::class, 'export'])->name('analytics.export');
     Route::get('/reviews', [AdminReviewController::class, 'index'])->name('reviews.index');

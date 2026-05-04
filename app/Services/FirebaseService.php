@@ -94,6 +94,41 @@ class FirebaseService
         $this->database->getReference('categories/' . $id)->remove();
     }
 
+    // --- Rewards ---
+
+    public function getRewards()
+    {
+        $data = $this->database->getReference('rewards')->getValue();
+        return $data ? collect($data)->filter() : collect([]);
+    }
+
+    public function getReward($id)
+    {
+        return $this->database->getReference('rewards/' . $id)->getValue();
+    }
+
+    public function saveReward($id, $data)
+    {
+        $this->database->getReference('rewards/' . $id)->set($data);
+    }
+
+    public function deleteReward($id)
+    {
+        $this->database->getReference('rewards/' . $id)->remove();
+    }
+
+    // --- Vouchers ---
+    public function getVouchers($userId)
+    {
+        $data = $this->database->getReference('vouchers/' . $userId)->getValue();
+        return $data ? collect($data) : collect([]);
+    }
+
+    public function markVoucherAsUsed($userId, $voucherId)
+    {
+        $this->database->getReference('vouchers/' . $userId . '/' . $voucherId . '/is_used')->set(true);
+    }
+
     // --- Products ---
 
     public function getProducts($categoryId = null)

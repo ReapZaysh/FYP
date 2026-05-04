@@ -28,9 +28,15 @@ class ProfileController extends Controller
             return ($order['customer_id'] ?? null) === $user->id;
         })->sortByDesc('created_at')->take(5); // Get latest 5 orders
 
+        // Fetch vouchers
+        $vouchers = $this->firebase->getVouchers($user->id)->filter(function($v) { 
+            return !($v['is_used'] ?? false); 
+        })->sortByDesc('created_at');
+
         return view('customer.profile', [
             'user' => $user,
             'recentOrders' => $userOrders,
+            'vouchers' => $vouchers,
             'loyaltyPoints' => $user->loyalty_points ?? 0
         ]);
     }

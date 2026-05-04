@@ -42,6 +42,30 @@
             </div>
         </div>
 
+        <!-- My Vouchers -->
+        @if($vouchers->count() > 0)
+            <div class="mb-10">
+                <h3 class="text-xl font-black text-gray-900 mb-4 flex items-center gap-2">
+                    <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path></svg>
+                    My Active Vouchers
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    @foreach($vouchers as $voucher)
+                        <div class="bg-emerald-50 border-2 border-emerald-500/20 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden shadow-sm">
+                            <div class="absolute -right-4 -top-4 w-16 h-16 bg-emerald-500/10 rounded-full blur-xl"></div>
+                            <div class="bg-emerald-500 text-white w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-inner">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                            <div>
+                                <h4 class="font-black text-gray-900">{{ $voucher['reward_name'] }}</h4>
+                                <p class="text-xs text-gray-500 font-bold">Redeemed {{ \Carbon\Carbon::parse($voucher['created_at'])->diffForHumans() }}</p>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
         <!-- Recent Orders -->
         <div>
             <h3 class="text-xl font-black text-gray-900 mb-4 flex items-center gap-2">
