@@ -91,7 +91,7 @@
                     </div>
                 </template>
 
-                <a href="{{ route('customer.menu') }}" class="text-blue-500 hover:text-blue-800 font-semibold">Place New Order</a>
+                <a href="{{ route('customer.menu', $order['table_number'] ?? null) }}" class="text-blue-500 hover:text-blue-800 font-semibold">Place New Order</a>
                 
                 <!-- Live Indicator -->
                 <div id="connection-status" class="flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold text-gray-400">
