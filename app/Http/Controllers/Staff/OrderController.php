@@ -101,6 +101,15 @@ class OrderController extends Controller
     {
         $this->firebase->updateOrderPayment($reference, 'paid');
 
+        // Award Boss Points if the order belongs to a registered customer
+        $order = $this->firebase->getOrder($reference);
+        if ($order && isset($order['customer_id'])) {
+            $pointsToAward = floor((float) ($order['total_amount'] ?? 0));
+            if ($pointsToAward > 0) {
+                $this->firebase->addPoints($order['customer_id'], $pointsToAward, $reference);
+            }
+        }
+
         return redirect()->back()
             ->with('success', 'Order #' . $reference . ' has been marked as paid.')
             ->with('print_receipt', $reference);

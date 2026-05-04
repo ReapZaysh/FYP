@@ -44,6 +44,29 @@ class FirebaseService
         $this->database->getReference('users/' . $id)->set($data);
     }
 
+    public function addPoints($userId, $points, $reference)
+    {
+        $user = $this->getUser($userId);
+        if ($user) {
+            $currentPoints = $user['loyalty_points'] ?? 0;
+            $newPoints = $currentPoints + $points;
+            
+            // Update user total points
+            $this->database->getReference('users/' . $userId . '/loyalty_points')->set($newPoints);
+            
+            // Record points history with 1 year expiration
+            $historyRef = $this->database->getReference('points_history/' . $userId)->push();
+            $historyRef->set([
+                'id' => $historyRef->getKey(),
+                'points' => $points,
+                'order_reference' => $reference,
+                'status' => 'active',
+                'created_at' => now()->toIso8601String(),
+                'expires_at' => now()->addYear()->toIso8601String()
+            ]);
+        }
+    }
+
     // --- Categories ---
 
     public function getCategories()
