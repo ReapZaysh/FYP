@@ -31,12 +31,11 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'username' => ['required', 'string', 'max:255'], // Removed unique:users rule since we use Firebase
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        // Check if email or username already exists in Firebase
+        // Check if email already exists in Firebase
         $existingUsers = $firebase->getUserByEmail($request->email);
         if ($existingUsers) {
             throw \Illuminate\Validation\ValidationException::withMessages([
@@ -48,7 +47,6 @@ class RegisteredUserController extends Controller
         $userData = [
             'id' => $userId,
             'name' => $request->name,
-            'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => 'customer',
