@@ -41,7 +41,9 @@ class RewardController extends Controller
 
         // Deduct points
         $newPoints = $currentPoints - $pointsRequired;
-        $this->firebase->saveUser($user->id, array_merge($user->toArray(), ['loyalty_points' => $newPoints]));
+        $userData = $this->firebase->getUser($user->id);
+        $userData['loyalty_points'] = $newPoints;
+        $this->firebase->saveUser($user->id, $userData);
 
         // Record negative points history for redemption
         $database = app('firebase.database');
