@@ -10,10 +10,9 @@
          }"
          @status-updated.window="status = $event.detail.status; payment_status = $event.detail.payment_status">
         
-        <div class="bg-white shadow-lg rounded-lg overflow-hidden border border-gray-100 p-6 text-center">
-
-            <h2 class="text-3xl font-bold mb-2 text-gray-800">Order #{{ $order['reference'] }}</h2>
-            <p class="text-gray-500 mb-6">Thank you for your order!</p>
+        <div class="bg-white dark:bg-gray-900 shadow-lg rounded-lg overflow-hidden border border-gray-100 dark:border-gray-800 p-6 text-center transition-colors">
+            <h2 class="text-3xl font-bold mb-2 text-gray-800 dark:text-white transition-colors">Order #{{ $order['reference'] }}</h2>
+            <p class="text-gray-500 dark:text-gray-400 mb-6 transition-colors">Thank you for your order!</p>
 
             <div class="flex justify-center items-center mb-8 space-x-4">
                 <!-- Canceled State -->
@@ -30,12 +29,12 @@
                             <div class="flex flex-col items-center flex-1">
                                 <div
                                     class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-white mb-2 transition-all duration-500"
-                                    :class="index <= currentStatusIndex ? 'bg-green-500' : 'bg-gray-300'">
+                                    :class="index <= currentStatusIndex ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-800'">
                                     <span x-text="index + 1"></span>
                                 </div>
                                 <span
                                     class="text-[10px] sm:text-sm font-semibold capitalize transition-all duration-500"
-                                    :class="index <= currentStatusIndex ? 'text-green-600' : 'text-gray-400'"
+                                    :class="index <= currentStatusIndex ? 'text-green-600' : 'text-gray-400 dark:text-gray-600'"
                                     x-text="s.replace('_', ' ')">
                                 </span>
                             </div>
@@ -44,32 +43,32 @@
                 </template>
             </div>
 
-            <div class="text-left border-t pt-6">
-                <h3 class="font-bold text-lg mb-4">Order Summary</h3>
+            <div class="text-left border-t dark:border-gray-800 pt-6 transition-colors">
+                <h3 class="font-bold text-lg mb-4 dark:text-white transition-colors">Order Summary</h3>
                 <ul class="space-y-4">
                     @foreach($order['items'] as $item)
-                        <li class="border-b border-gray-50 pb-2 last:border-0">
+                        <li class="border-b border-gray-50 dark:border-gray-800 pb-2 last:border-0 transition-colors">
                             <div class="flex justify-between items-start">
-                                <div>
+                                <div class="dark:text-gray-200">
                                     <span class="font-semibold">{{ $item['quantity'] }}x</span> {{ $item['name'] }}
                                     @if(!empty($item['note']))
-                                        <p class="text-xs text-gray-400 italic mt-1">Note: {{ $item['note'] }}</p>
+                                        <p class="text-xs text-gray-400 dark:text-gray-500 italic mt-1 transition-colors">Note: {{ $item['note'] }}</p>
                                     @endif
                                 </div>
-                                <div class="font-semibold text-gray-700 text-sm">RM {{ number_format($item['price'] * $item['quantity'], 2) }}</div>
+                                <div class="font-semibold text-gray-700 dark:text-gray-300 text-sm transition-colors">RM {{ number_format($item['price'] * $item['quantity'], 2) }}</div>
                             </div>
                         </li>
                     @endforeach
                 </ul>
 
                 @if(!empty($order['order_note']))
-                    <div class="mt-6 p-4 bg-gray-50 rounded-xl border border-gray-100 text-sm">
-                        <p class="text-gray-400 font-bold uppercase tracking-widest text-[10px] mb-2">Your Instructions</p>
-                        <p class="text-gray-700 leading-relaxed">{{ $order['order_note'] }}</p>
+                    <div class="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 text-sm transition-colors">
+                        <p class="text-gray-400 dark:text-gray-500 font-bold uppercase tracking-widest text-[10px] mb-2">Your Instructions</p>
+                        <p class="text-gray-700 dark:text-gray-300 leading-relaxed transition-colors">{{ $order['order_note'] }}</p>
                     </div>
                 @endif
 
-                <div class="border-t mt-4 pt-4 flex justify-between items-center text-xl font-black text-gray-900">
+                <div class="border-t dark:border-gray-800 mt-4 pt-4 flex justify-between items-center text-xl font-black text-gray-900 dark:text-white transition-colors">
                     <span>Total</span>
                     <span>RM {{ number_format($order['total_amount'], 2) }}</span>
                 </div>
@@ -79,15 +78,15 @@
 
                 {{-- Payment Status Banners --}}
                 <template x-if="status === 'completed' && payment_status !== 'paid'">
-                    <div class="w-full p-4 bg-amber-50 border border-amber-200 rounded-2xl text-center">
-                        <p class="text-amber-700 font-bold text-lg">🍽️ Your food is ready!</p>
-                        <p class="text-amber-600 text-sm mt-1">Please proceed to the counter to pay.</p>
+                    <div class="w-full p-4 bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-900/30 rounded-2xl text-center transition-colors">
+                        <p class="text-amber-700 dark:text-amber-400 font-bold text-lg">🍽️ Your food is ready!</p>
+                        <p class="text-amber-600 dark:text-amber-500 text-sm mt-1">Please proceed to the counter to pay.</p>
                     </div>
                 </template>
                 <template x-if="payment_status === 'paid'">
-                    <div class="w-full p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-center">
-                        <p class="text-emerald-700 font-bold text-lg">✅ Payment Confirmed!</p>
-                        <p class="text-emerald-600 text-sm mt-1">Thank you for dining with us. See you again!</p>
+                    <div class="w-full p-4 bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-200 dark:border-emerald-900/30 rounded-2xl text-center transition-colors">
+                        <p class="text-emerald-700 dark:text-emerald-400 font-bold text-lg">✅ Payment Confirmed!</p>
+                        <p class="text-emerald-600 dark:text-emerald-500 text-sm mt-1">Thank you for dining with us. See you again!</p>
                     </div>
                 </template>
 

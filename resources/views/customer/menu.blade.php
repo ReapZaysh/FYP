@@ -69,7 +69,7 @@
         @endif
 
         <!-- Search Section -->
-        <div class="bg-white shadow-sm sticky top-0 z-50 py-4 px-4">
+        <div class="bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-50 py-4 px-4 transition-colors duration-300">
             <div class="max-w-7xl mx-auto">
                 <div class="relative mb-4">
                     <span class="absolute inset-y-0 left-0 pl-3 flex items-center">
@@ -78,7 +78,7 @@
                         </svg>
                     </span>
                     <input x-model="search" type="text" 
-                        class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-full leading-5 bg-gray-50 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out" 
+                        class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-full leading-5 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out" 
                         placeholder="Search for wings, drinks, or anything...">
                 </div>
 
@@ -88,7 +88,7 @@
                         @if(count($category['products']) > 0)
                             <a href="#cat-{{ $id }}" 
                                x-show="hasVisibleProducts({{ json_encode($category['products']) }})"
-                               class="flex-shrink-0 px-4 py-2 bg-blue-50 text-blue-600 rounded-full text-xs font-bold transition hover:bg-blue-100">{{ $category['name'] }}</a>
+                               class="flex-shrink-0 px-4 py-2 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full text-xs font-bold transition hover:bg-blue-100 dark:hover:bg-blue-900/50">{{ $category['name'] }}</a>
                         @endif
                     @endforeach
                 </div>
@@ -99,18 +99,18 @@
         <template x-if="search === ''">
             @if(count($featuredProducts) > 0)
                 <div class="py-6 px-4 max-w-7xl mx-auto">
-                    <h3 class="text-xl font-bold mb-4 px-2">Featured Items</h3>
+                    <h3 class="text-xl font-bold mb-4 px-2 dark:text-white transition-colors">Featured Items</h3>
                     <div class="flex overflow-x-auto space-x-4 pb-4 scrollbar-hide px-2">
                         @foreach($featuredProducts as $id => $product)
                             <div @click="openModal('{{ $id }}', '{{ addslashes($product['name']) }}', {{ $product['price'] }}, '{{ $product['image_path'] ?? '' }}', '{{ addslashes($product['description'] ?? '') }}', {{ $product['average_rating'] ?? 0 }}, {{ $product['review_count'] ?? 0 }}, {{ json_encode($product['reviews'] ?? []) }})" 
-                                 class="flex-shrink-0 w-64 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden cursor-pointer transition transform hover:scale-[1.02]">
+                                 class="flex-shrink-0 w-64 bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden cursor-pointer transition transform hover:scale-[1.02]">
                                 @if(!empty($product['image_path']))
                                     <img class="h-40 w-full object-cover" src="{{ str_starts_with($product['image_path'], 'http') ? $product['image_path'] : asset('storage/' . $product['image_path']) }}" alt="{{ $product['name'] }}">
                                 @else
-                                    <div class="h-40 w-full bg-gray-100 flex items-center justify-center text-gray-400">No Image</div>
+                                    <div class="h-40 w-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-400">No Image</div>
                                 @endif
                                 <div class="p-4">
-                                    <h4 class="font-bold text-lg mb-1">{{ $product['name'] }}</h4>
+                                    <h4 class="font-bold text-lg mb-1 dark:text-white transition-colors">{{ $product['name'] }}</h4>
                                     
                                     @if(isset($product['review_count']) && $product['review_count'] > 0)
                                     <div class="flex items-center text-xs text-yellow-500 mb-2 font-bold">
@@ -140,25 +140,25 @@
             <!-- Monthly Trending -->
             @if(count($monthlyTrending) > 0)
                 <div x-show="search === ''">
-                    <h3 class="text-2xl font-black mb-4 px-2 flex items-center justify-between">
+                    <h3 class="text-2xl font-black mb-4 px-2 flex items-center justify-between dark:text-white transition-colors">
                         <span>🔥 Trending This Month</span>
-                        <span class="text-xs font-bold bg-blue-100 text-blue-600 px-3 py-1 rounded-full uppercase">Top 3</span>
+                        <span class="text-xs font-bold bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-full uppercase">Top 3</span>
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 px-2">
                         @foreach($monthlyTrending as $id => $product)
                             <div @click="openModal('{{ $id }}', '{{ addslashes($product['name']) }}', {{ $product['price'] }}, '{{ $product['image_path'] ?? '' }}', '{{ addslashes($product['description'] ?? '') }}', {{ $product['average_rating'] ?? 0 }}, {{ $product['review_count'] ?? 0 }}, {{ json_encode($product['reviews'] ?? []) }})" 
-                                 class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden cursor-pointer transition transform hover:scale-[1.02] flex items-center p-4 gap-4">
+                                 class="bg-white dark:bg-gray-900 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden cursor-pointer transition transform hover:scale-[1.02] flex items-center p-4 gap-4">
                                 <div class="w-20 h-20 flex-shrink-0">
                                     @if(!empty($product['image_path']))
                                         <img class="w-full h-full object-cover rounded-2xl" src="{{ str_starts_with($product['image_path'], 'http') ? $product['image_path'] : asset('storage/' . $product['image_path']) }}" alt="{{ $product['name'] }}">
                                     @else
-                                        <div class="w-full h-full bg-gray-50 rounded-2xl flex items-center justify-center text-gray-300">
+                                        <div class="w-full h-full bg-gray-50 dark:bg-gray-800 rounded-2xl flex items-center justify-center text-gray-300">
                                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 002-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                         </div>
                                     @endif
                                 </div>
                                 <div class="flex-grow">
-                                    <h4 class="font-bold text-lg leading-tight">{{ $product['name'] }}</h4>
+                                    <h4 class="font-bold text-lg leading-tight dark:text-white transition-colors">{{ $product['name'] }}</h4>
                                     
                                     @if(isset($product['review_count']) && $product['review_count'] > 0)
                                     <div class="flex items-center text-xs text-yellow-500 mb-1 font-bold">
@@ -181,25 +181,25 @@
             <!-- Yearly Choice -->
             @if(count($yearlyChoice) > 0)
                 <div x-show="search === ''">
-                    <h3 class="text-2xl font-black mb-4 px-2 flex items-center justify-between">
+                    <h3 class="text-2xl font-black mb-4 px-2 flex items-center justify-between dark:text-white transition-colors">
                         <span>👑 Yearly Choice</span>
-                        <span class="text-xs font-bold bg-green-100 text-green-600 px-3 py-1 rounded-full uppercase">Best of {{ date('Y') }}</span>
+                        <span class="text-xs font-bold bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 px-3 py-1 rounded-full uppercase">Best of {{ date('Y') }}</span>
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 px-2">
                         @foreach($yearlyChoice as $id => $product)
                             <div @click="openModal('{{ $id }}', '{{ addslashes($product['name']) }}', {{ $product['price'] }}, '{{ $product['image_path'] ?? '' }}', '{{ addslashes($product['description'] ?? '') }}', {{ $product['average_rating'] ?? 0 }}, {{ $product['review_count'] ?? 0 }}, {{ json_encode($product['reviews'] ?? []) }})" 
-                                 class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden cursor-pointer transition transform hover:scale-[1.02] flex items-center p-4 gap-4">
+                                 class="bg-white dark:bg-gray-900 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden cursor-pointer transition transform hover:scale-[1.02] flex items-center p-4 gap-4">
                                 <div class="w-20 h-20 flex-shrink-0">
                                     @if(!empty($product['image_path']))
                                         <img class="w-full h-full object-cover rounded-2xl" src="{{ str_starts_with($product['image_path'], 'http') ? $product['image_path'] : asset('storage/' . $product['image_path']) }}" alt="{{ $product['name'] }}">
                                     @else
-                                        <div class="w-full h-full bg-gray-50 rounded-2xl flex items-center justify-center text-gray-300">
+                                        <div class="w-full h-full bg-gray-50 dark:bg-gray-800 rounded-2xl flex items-center justify-center text-gray-300">
                                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 002-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                         </div>
                                     @endif
                                 </div>
                                 <div class="flex-grow">
-                                    <h4 class="font-bold text-lg leading-tight">{{ $product['name'] }}</h4>
+                                    <h4 class="font-bold text-lg leading-tight dark:text-white transition-colors">{{ $product['name'] }}</h4>
                                     
                                     @if(isset($product['review_count']) && $product['review_count'] > 0)
                                     <div class="flex items-center text-xs text-yellow-500 mb-1 font-bold">
@@ -223,12 +223,12 @@
         <!-- Menu Categories -->
         <div class="max-w-7xl mx-auto px-4 pb-12">
             <!-- Navigation Chips -->
-            <div class="sticky top-20 bg-gray-100/80 backdrop-blur-md z-40 py-3 mb-6 overflow-x-auto whitespace-nowrap scrollbar-hide">
+            <div class="sticky top-20 bg-gray-100/80 dark:bg-gray-950/80 backdrop-blur-md z-40 py-3 mb-6 overflow-x-auto whitespace-nowrap scrollbar-hide transition-colors duration-300">
                 @foreach($categoriesWithProducts as $id => $category)
                     @if(count($category['products']) > 0)
                         <a href="#cat-{{ $id }}" 
                            x-show="hasVisibleProducts({{ json_encode($category['products']) }})"
-                           class="inline-block px-5 py-2 mr-2 bg-white rounded-full shadow-sm text-gray-700 font-semibold hover:bg-blue-50 hover:text-blue-600 text-sm transition">{{ $category['name'] }}</a>
+                           class="inline-block px-5 py-2 mr-2 bg-white dark:bg-gray-800 rounded-full shadow-sm text-gray-700 dark:text-gray-300 font-semibold hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 text-sm transition">{{ $category['name'] }}</a>
                     @endif
                 @endforeach
             </div>
@@ -238,7 +238,7 @@
                     <div id="cat-{{ $catId }}" 
                          x-show="hasVisibleProducts({{ json_encode($category['products']) }})"
                          class="mb-10 scroll-mt-36">
-                        <h3 class="text-2xl font-black mb-6 text-gray-900 flex items-center">
+                        <h3 class="text-2xl font-black mb-6 text-gray-900 dark:text-white flex items-center transition-colors">
                             <span class="bg-blue-600 w-2 h-8 rounded-full mr-3"></span>
                             {{ $category['name'] }}
                         </h3>
@@ -246,18 +246,18 @@
                             @foreach($category['products'] as $prodId => $product)
                                 <div x-show="filterProducts('{{ addslashes($product['name']) }}')"
                                      @click="openModal('{{ $prodId }}', '{{ addslashes($product['name']) }}', {{ $product['price'] }}, '{{ $product['image_path'] ?? '' }}', '{{ addslashes($product['description'] ?? '') }}', {{ $product['average_rating'] ?? 0 }}, {{ $product['review_count'] ?? 0 }}, {{ json_encode($product['reviews'] ?? []) }})"
-                                     class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex cursor-pointer transition hover:shadow-md hover:scale-[1.01] p-4">
+                                     class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden flex cursor-pointer transition hover:shadow-md dark:hover:shadow-blue-900/10 hover:scale-[1.01] p-4">
                                     <div class="flex-grow">
-                                        <h4 class="font-bold text-lg text-gray-900 mb-1">{{ $product['name'] }}</h4>
+                                        <h4 class="font-bold text-lg text-gray-900 dark:text-white mb-1 transition-colors">{{ $product['name'] }}</h4>
                                         
                                         @if(isset($product['review_count']) && $product['review_count'] > 0)
                                         <div class="flex items-center text-xs text-yellow-500 mb-1 font-bold">
                                             <span>★ {{ $product['average_rating'] }}</span>
-                                            <span class="text-gray-400 ml-1">({{ $product['review_count'] }})</span>
+                                            <span class="text-gray-400 dark:text-gray-500 ml-1">({{ $product['review_count'] }})</span>
                                         </div>
                                         @endif
 
-                                        <p class="text-gray-500 text-sm mb-3 line-clamp-2">{{ $product['description'] ?? 'No description available.' }}</p>
+                                        <p class="text-gray-500 dark:text-gray-400 text-sm mb-3 line-clamp-2 transition-colors">{{ $product['description'] ?? 'No description available.' }}</p>
                                         <div class="flex items-baseline space-x-1">
                                             <span class="text-sm font-medium text-blue-600">RM</span>
                                             <span class="text-2xl font-black text-blue-600">{{ number_format($product['price'], 2) }}</span>
@@ -293,7 +293,7 @@
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100"
              x-transition:leave-end="opacity-0"
-             class="fixed inset-0 z-[60] flex items-center justify-center px-4 bg-gray-900/60 backdrop-blur-sm"
+             class="fixed inset-0 z-[60] flex items-center justify-center px-4 bg-gray-900/60 dark:bg-black/80 backdrop-blur-sm transition-all duration-300"
              style="display: none;">
             
             <div @click.away="closeModal()" 
@@ -301,7 +301,7 @@
                  x-transition:enter="transition ease-out duration-300"
                  x-transition:enter-start="opacity-0 scale-95 translate-y-4"
                  x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-                 class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col">
+                 class="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col transition-colors duration-300">
                 
                 <!-- Product Image in Modal -->
                 <div class="h-48 w-full relative">
@@ -317,20 +317,20 @@
                 </div>
 
                 <div class="p-6">
-                    <div class="flex border-b border-gray-100 mb-4">
-                        <button @click="activeTab = 'order'" :class="{'border-blue-600 text-blue-600': activeTab === 'order', 'border-transparent text-gray-500 hover:text-gray-700': activeTab !== 'order'}" class="flex-1 py-2 font-bold text-center border-b-2 transition">Order</button>
-                        <button @click="activeTab = 'reviews'" :class="{'border-blue-600 text-blue-600': activeTab === 'reviews', 'border-transparent text-gray-500 hover:text-gray-700': activeTab !== 'reviews'}" class="flex-1 py-2 font-bold text-center border-b-2 transition">
+                    <div class="flex border-b border-gray-100 dark:border-gray-800 mb-4 transition-colors">
+                        <button @click="activeTab = 'order'" :class="{'border-blue-600 text-blue-600': activeTab === 'order', 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white': activeTab !== 'order'}" class="flex-1 py-2 font-bold text-center border-b-2 transition">Order</button>
+                        <button @click="activeTab = 'reviews'" :class="{'border-blue-600 text-blue-600': activeTab === 'reviews', 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white': activeTab !== 'reviews'}" class="flex-1 py-2 font-bold text-center border-b-2 transition">
                             Reviews <span x-show="selectedProduct.review_count > 0" x-text="'(' + selectedProduct.review_count + ')'" class="text-xs ml-1"></span>
                         </button>
                     </div>
 
                     <!-- Order Tab -->
                     <div x-show="activeTab === 'order'">
-                        <h3 class="text-2xl font-black text-gray-900 mb-1" x-text="selectedProduct.name"></h3>
+                        <h3 class="text-2xl font-black text-gray-900 dark:text-white mb-1 transition-colors" x-text="selectedProduct.name"></h3>
                         <div class="flex items-center text-xs text-yellow-500 mb-2 font-bold" x-show="selectedProduct.review_count > 0">
                             <span x-text="'★ ' + selectedProduct.average_rating"></span>
                         </div>
-                        <p class="text-gray-500 text-sm mb-6" x-text="selectedProduct.description"></p>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm mb-6 transition-colors" x-text="selectedProduct.description"></p>
                         
                         <div class="flex justify-between items-center mb-8">
                             <div class="flex flex-col">
@@ -339,10 +339,10 @@
                             </div>
                             
                             <!-- Qty Selector -->
-                            <div class="flex items-center bg-gray-100 rounded-2xl p-1 gap-2 border border-gray-200">
-                                <button type="button" @click="if(qty > 1) qty--" class="w-10 h-10 flex items-center justify-center text-gray-600 hover:text-blue-600 font-black text-xl transition active:scale-90">-</button>
-                                <span class="w-8 text-center font-black text-lg" x-text="qty"></span>
-                                <button type="button" @click="qty++" class="w-10 h-10 flex items-center justify-center text-gray-600 hover:text-blue-600 font-black text-xl transition active:scale-90">+</button>
+                            <div class="flex items-center bg-gray-100 dark:bg-gray-800 rounded-2xl p-1 gap-2 border border-gray-200 dark:border-gray-700 transition-colors">
+                                <button type="button" @click="if(qty > 1) qty--" class="w-10 h-10 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 font-black text-xl transition active:scale-90">-</button>
+                                <span class="w-8 text-center font-black text-lg dark:text-white" x-text="qty"></span>
+                                <button type="button" @click="qty++" class="w-10 h-10 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 font-black text-xl transition active:scale-90">+</button>
                             </div>
                         </div>
 
@@ -356,11 +356,11 @@
                     </div>
 
                     <!-- Reviews Tab -->
-                    <div x-show="activeTab === 'reviews'" class="max-h-[60vh] overflow-y-auto scrollbar-hide -mx-6 px-6">
+                    <div x-show="activeTab === 'reviews'" class="max-h-[60vh] overflow-y-auto scrollbar-hide -mx-6 px-6 transition-colors">
                         
                         <!-- Review Form -->
-                        <div class="bg-gray-50 rounded-xl p-4 mb-6 border border-gray-100">
-                            <h4 class="font-bold text-gray-900 mb-3 text-sm">Leave a Review</h4>
+                        <div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 mb-6 border border-gray-100 dark:border-gray-700">
+                            <h4 class="font-bold text-gray-900 dark:text-white mb-3 text-sm transition-colors">Leave a Review</h4>
                             <form :action="'/reviews/' + selectedProduct.id" method="POST">
                                 @csrf
                                 <div class="mb-3" x-data="{ rating: 0, hoverRating: 0 }">
@@ -379,10 +379,10 @@
                                     </div>
                                 </div>
                                 <div class="mb-3">
-                                    <input type="text" name="customer_name" placeholder="Your Name (Optional)" class="w-full border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500">
+                                    <input type="text" name="customer_name" placeholder="Your Name (Optional)" class="w-full bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500 transition-colors">
                                 </div>
                                 <div class="mb-3">
-                                    <textarea name="comment" placeholder="Tell us what you think..." rows="2" class="w-full border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500"></textarea>
+                                    <textarea name="comment" placeholder="Tell us what you think..." rows="2" class="w-full bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500 transition-colors"></textarea>
                                 </div>
                                 <div class="flex items-center justify-between">
                                     <label class="flex items-center gap-2 cursor-pointer">
@@ -397,19 +397,19 @@
                         <!-- Review List -->
                         <div class="space-y-4">
                             <template x-if="selectedProduct.reviews.length === 0">
-                                <p class="text-center text-gray-500 text-sm py-4 italic">No reviews yet. Be the first!</p>
+                                <p class="text-center text-gray-500 dark:text-gray-400 text-sm py-4 italic">No reviews yet. Be the first!</p>
                             </template>
                             
                             <template x-for="review in selectedProduct.reviews">
-                                <div class="border-b border-gray-100 pb-4 last:border-0">
+                                <div class="border-b border-gray-100 dark:border-gray-800 pb-4 last:border-0 transition-colors">
                                     <div class="flex justify-between items-start mb-1">
                                         <div class="flex flex-col">
-                                            <span class="font-bold text-sm text-gray-900" x-text="review.customer_name"></span>
+                                            <span class="font-bold text-sm text-gray-900 dark:text-white" x-text="review.customer_name"></span>
                                             <span class="text-xs text-yellow-500 font-bold" x-text="'★ '.repeat(review.rating) + '☆ '.repeat(5-review.rating)"></span>
                                         </div>
-                                        <span class="text-[10px] text-gray-400 font-mono" x-text="review.code"></span>
+                                        <span class="text-[10px] text-gray-400 dark:text-gray-500 font-mono" x-text="review.code"></span>
                                     </div>
-                                    <p class="text-sm text-gray-600 mt-1" x-text="review.comment"></p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1 transition-colors" x-text="review.comment"></p>
                                 </div>
                             </template>
                         </div>

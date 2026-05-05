@@ -2,8 +2,8 @@
     <div class="max-w-4xl mx-auto px-4 py-8">
         <div class="flex justify-between items-end mb-8">
             <div>
-                <h2 class="text-3xl font-black text-gray-900 mb-1">Your Order</h2>
-                <p class="text-gray-500 font-medium">Review your items before checkout</p>
+                <h2 class="text-3xl font-black text-gray-900 dark:text-white mb-1 transition-colors">Your Order</h2>
+                <p class="text-gray-500 dark:text-gray-400 font-medium transition-colors">Review your items before checkout</p>
             </div>
             @if(count($cart) > 0)
                 <form action="{{ route('customer.cart.clear') }}" method="POST"
@@ -28,10 +28,10 @@
             <div class="space-y-4 mb-10">
                 @foreach($cart as $id => $details)
                     <div
-                        class="bg-white rounded-3xl shadow-sm border border-gray-100 p-4 flex items-center gap-4 transition hover:shadow-md">
+                        class="bg-white dark:bg-gray-900 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 p-4 flex items-center gap-4 transition hover:shadow-md dark:hover:shadow-blue-900/10">
                         <!-- Product Image -->
                         <div
-                            class="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 bg-gray-50 rounded-2xl overflow-hidden border border-gray-100">
+                            class="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 bg-gray-50 dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-700 transition-colors">
                             @if(!empty($details['image']))
                                 <img src="{{ str_starts_with($details['image'], 'http') ? $details['image'] : asset('storage/' . $details['image']) }}" alt="{{ $details['name'] }}"
                                     class="w-full h-full object-cover">
@@ -48,24 +48,24 @@
 
                         <!-- Product Info -->
                         <div class="flex-grow min-w-0">
-                            <h3 class="font-black text-gray-900 text-lg sm:text-xl truncate">{{ $details['name'] }}</h3>
-                            <p class="text-blue-600 font-bold mb-2">RM {{ number_format($details['price'], 2) }}</p>
+                            <h3 class="font-black text-gray-900 dark:text-white text-lg sm:text-xl truncate transition-colors">{{ $details['name'] }}</h3>
+                            <p class="text-blue-600 dark:text-blue-400 font-bold mb-2 transition-colors">RM {{ number_format($details['price'], 2) }}</p>
 
                             <!-- Simple Actions for Mobile/All -->
                             <div class="flex items-center gap-4">
                                 <!-- Qty Controls -->
-                                <div class="flex items-center bg-gray-100 rounded-xl p-1 border border-gray-200">
+                                <div class="flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl p-1 border border-gray-200 dark:border-gray-700 transition-colors">
                                     <form action="{{ route('customer.cart.remove', $id) }}" method="POST">
                                         @csrf
                                         <button type="submit"
-                                            class="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-red-500 font-bold text-xl transition active:scale-90">-</button>
+                                            class="w-8 h-8 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-red-500 font-bold text-xl transition active:scale-90">-</button>
                                     </form>
-                                    <span class="w-6 text-center font-black text-gray-900">{{ $details['quantity'] }}</span>
+                                    <span class="w-6 text-center font-black text-gray-900 dark:text-white">{{ $details['quantity'] }}</span>
                                     <form action="{{ route('customer.cart.add', $id) }}" method="POST">
                                         @csrf
                                         <input type="hidden" name="quantity" value="1">
                                         <button type="submit"
-                                            class="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-blue-600 font-bold text-xl transition active:scale-90">+</button>
+                                            class="w-8 h-8 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 font-bold text-xl transition active:scale-90">+</button>
                                     </form>
                                 </div>
                             </div>
@@ -76,15 +76,15 @@
                                     name="notes[{{ $id }}]" 
                                     form="order-form"
                                     placeholder="Add note (e.g. no onions, extra spicy)"
-                                    class="w-full text-xs bg-gray-50 border border-gray-200 rounded-lg py-2 px-3 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 transition"
+                                    class="w-full text-xs bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white rounded-lg py-2 px-3 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 transition"
                                 >
                             </div>
                         </div>
 
                         <!-- Subtotal (Right Align) -->
                         <div class="text-right flex-shrink-0">
-                            <span class="block text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">Subtotal</span>
-                            <span class="block text-lg font-black text-gray-900">RM
+                            <span class="block text-gray-400 dark:text-gray-500 text-xs font-bold uppercase tracking-wider mb-1 transition-colors">Subtotal</span>
+                            <span class="block text-lg font-black text-gray-900 dark:text-white transition-colors">RM
                                 {{ number_format($details['price'] * $details['quantity'], 2) }}</span>
                         </div>
                     </div>
@@ -189,15 +189,15 @@
                 </form>
             </div>
         @else
-            <div class="text-center py-24 bg-white rounded-[3rem] shadow-sm border border-gray-100 px-6">
-                <div class="w-32 h-32 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-8">
-                    <svg class="w-16 h-16 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="text-center py-24 bg-white dark:bg-gray-900 rounded-[3rem] shadow-sm border border-gray-100 dark:border-gray-800 px-6 transition-colors duration-300">
+                <div class="w-32 h-32 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-8 transition-colors">
+                    <svg class="w-16 h-16 text-gray-200 dark:text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                     </svg>
                 </div>
-                <h3 class="text-2xl font-black text-gray-900 mb-4">Your cart is feeling lonely</h3>
-                <p class="text-gray-500 mb-10 max-w-sm mx-auto">Looks like you haven't added any of our delicious food yet.
+                <h3 class="text-2xl font-black text-gray-900 dark:text-white mb-4 transition-colors">Your cart is feeling lonely</h3>
+                <p class="text-gray-500 dark:text-gray-400 mb-10 max-w-sm mx-auto transition-colors">Looks like you haven't added any of our delicious food yet.
                     Let's fix that!</p>
                 <a href="{{ route('customer.menu') }}"
                     class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-black py-5 px-12 rounded-2xl shadow-xl shadow-blue-500/10 transition transform hover:scale-105 active:scale-95">
