@@ -89,7 +89,34 @@
         @else
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 @foreach($pendingPayment as $id => $order)
-                    <div class="bg-white rounded-3xl shadow-sm border border-gray-50 p-6 flex flex-col gap-4 hover:shadow-md transition-all"
+                    <div class="bg-white rounded-3xl shadow-sm border border-gray-50 p-6 flex flex-col gap-4 hover:shadow-md transition-all relative overflow-hidden"
+                         x-data="{
+                            splitMode: false,
+                            items: [
+                                @foreach($order['items'] as $index => $item)
+                                {
+                                    index: {{ $index }},
+                                    name: '{{ addslashes($item['name']) }}',
+                                    price: {{ (float)($item['price'] ?? 0) }},
+                                    orderedQty: {{ (int)($item['quantity'] ?? 1) }},
+                                    paidQty: {{ (int)($item['paid_quantity'] ?? 0) }},
+                                    payQty: {{ max(0, (int)($item['quantity'] ?? 1) - (int)($item['paid_quantity'] ?? 0)) }}
+                                },
+                                @endforeach
+                            ],
+                            get amountPaidAlready() {
+                                return this.items.reduce((sum, item) => sum + (item.paidQty * item.price), 0);
+                            },
+                            get amountRemaining() {
+                                return {{ (float)$order['total_amount'] }} - this.amountPaidAlready;
+                            },
+                            get splitTotal() {
+                                return this.items.reduce((sum, item) => sum + (item.payQty * item.price), 0);
+                            },
+                            get hasValidSplit() {
+                                return this.splitTotal > 0 && this.items.every(i => i.payQty >= 0 && (i.paidQty + i.payQty) <= i.orderedQty);
+                            }
+                         }"
                          x-show="search === '' || 
                                  '{{ strtolower($order['table_number'] ?? '') }}'.includes(search.toLowerCase()) || 
                                  '{{ strtolower($order['reference'] ?? '') }}'.includes(search.toLowerCase()) ||
@@ -116,39 +143,85 @@
                                     </div>
                                 @endif
                             </div>
-                            <span class="text-[10px] font-bold text-emerald-600 px-3 py-1 bg-emerald-50 rounded-full">Completed</span>
+                            <div class="flex flex-col items-end gap-1">
+                                <span class="text-[10px] font-bold text-emerald-600 px-3 py-1 bg-emerald-50 rounded-full">Completed</span>
+                                @if(($order['payment_status'] ?? 'unpaid') === 'partially_paid')
+                                    <span class="text-[10px] font-bold text-amber-600 px-3 py-1 bg-amber-50 rounded-full">Partially Paid</span>
+                                @endif
+                            </div>
                         </div>
 
-                        {{-- Order Items --}}
-                        <div class="bg-gray-50 rounded-2xl p-4 space-y-2 flex-grow">
-                            @foreach($order['items'] as $item)
-                                <div class="flex justify-between items-center text-sm">
+                        {{-- Order Items (Normal Mode) --}}
+                        <div class="bg-gray-50 rounded-2xl p-4 space-y-2 flex-grow" x-show="!splitMode">
+                            <template x-for="item in items" :key="item.index">
+                                <div class="flex justify-between items-center text-sm" :class="item.orderedQty === item.paidQty ? 'opacity-40 line-through' : ''">
                                     <span class="text-gray-700 font-medium">
-                                        <span class="font-black text-gray-900">{{ $item['quantity'] }}x</span>
-                                        {{ $item['name'] }}
+                                        <span class="font-black text-gray-900" x-text="item.orderedQty + 'x'"></span>
+                                        <span x-text="item.name"></span>
+                                        <span x-show="item.paidQty > 0 && item.paidQty < item.orderedQty" class="text-xs text-amber-600 font-bold ml-1">(Paid: <span x-text="item.paidQty"></span>)</span>
                                     </span>
-                                    <span class="text-gray-500 font-medium">RM {{ number_format(($item['price'] ?? 0) * ($item['quantity'] ?? 1), 2) }}</span>
+                                    <span class="text-gray-500 font-medium">RM <span x-text="(item.price * item.orderedQty).toFixed(2)"></span></span>
                                 </div>
-                            @endforeach
+                            </template>
+                        </div>
+
+                        {{-- Order Items (Split Mode) --}}
+                        <div class="bg-blue-50 rounded-2xl p-4 space-y-3 flex-grow" x-show="splitMode" style="display: none;">
+                            <div class="text-xs font-bold text-blue-800 uppercase tracking-widest mb-2 flex justify-between">
+                                <span>Select Items to Pay</span>
+                                <span class="text-amber-600" x-text="'RM ' + amountRemaining.toFixed(2) + ' Pending'"></span>
+                            </div>
+                            <template x-for="item in items" :key="item.index">
+                                <div class="flex justify-between items-center text-sm" x-show="item.orderedQty > item.paidQty">
+                                    <div class="flex flex-col">
+                                        <span class="text-gray-900 font-bold" x-text="item.name"></span>
+                                        <span class="text-gray-500 text-xs">RM <span x-text="item.price.toFixed(2)"></span> each (Unpaid: <span x-text="item.orderedQty - item.paidQty"></span>)</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 bg-white rounded-lg p-1 border border-gray-200">
+                                        <button type="button" @click="if(item.payQty > 0) item.payQty--" class="w-6 h-6 rounded bg-gray-100 text-gray-600 flex items-center justify-center font-bold hover:bg-gray-200">-</button>
+                                        <span class="w-4 text-center font-bold text-gray-900" x-text="item.payQty"></span>
+                                        <button type="button" @click="if(item.payQty < (item.orderedQty - item.paidQty)) item.payQty++" class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold hover:bg-blue-200">+</button>
+                                    </div>
+                                </div>
+                            </template>
                         </div>
 
                         {{-- Total --}}
-                        <div class="flex justify-between items-center border-t border-gray-100 pt-4">
-                            <span class="text-sm font-bold text-gray-500 uppercase tracking-widest">Total</span>
-                            <span class="text-2xl font-black text-gray-900">RM {{ number_format($order['total_amount'], 2) }}</span>
+                        <div class="flex justify-between items-center border-t border-gray-100 pt-4" x-show="!splitMode">
+                            <span class="text-sm font-bold text-gray-500 uppercase tracking-widest">Total Remaining</span>
+                            <span class="text-2xl font-black text-gray-900">RM <span x-text="amountRemaining.toFixed(2)"></span></span>
+                        </div>
+                        <div class="flex justify-between items-center border-t border-blue-100 pt-4" x-show="splitMode" style="display: none;">
+                            <span class="text-sm font-bold text-blue-600 uppercase tracking-widest">Paying Now</span>
+                            <span class="text-2xl font-black text-blue-700">RM <span x-text="splitTotal.toFixed(2)"></span></span>
                         </div>
 
-                        {{-- Mark as Paid Button --}}
-                        <div class="flex flex-col gap-2">
-                            <a href="{{ route('staff.orders.receipt', $order['reference']) }}" target="_blank"
-                               class="w-full border-2 border-gray-200 hover:border-gray-400 text-gray-600 hover:text-gray-900 font-bold py-3 px-6 rounded-2xl transition-all flex items-center justify-center gap-2 text-sm">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
-                                </svg>
-                                Print Receipt
-                            </a>
-                            <form action="{{ route('staff.orders.markAsPaid', $order['reference']) }}" method="POST"
-                                  onsubmit="return confirm('Confirm payment of RM {{ number_format($order['total_amount'], 2) }} for Order #{{ $order['reference'] }}?')">
+                        {{-- Action Buttons --}}
+                        <div class="flex flex-col gap-2 mt-2">
+                            <div class="flex gap-2" x-show="!splitMode">
+                                <a href="{{ route('staff.orders.receipt', $order['reference']) }}" target="_blank"
+                                   class="flex-1 border-2 border-gray-200 hover:border-gray-400 text-gray-600 hover:text-gray-900 font-bold py-3 px-2 rounded-2xl transition-all flex items-center justify-center gap-2 text-sm">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                                    </svg>
+                                    Receipt
+                                </a>
+                                <button type="button" @click="splitMode = true"
+                                   class="flex-1 border-2 border-blue-200 hover:border-blue-400 text-blue-600 hover:text-blue-900 font-bold py-3 px-2 rounded-2xl transition-all flex items-center justify-center gap-2 text-sm">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                                    Split Pay
+                                </button>
+                            </div>
+                            
+                            <div class="flex gap-2" x-show="splitMode" style="display: none;">
+                                <button type="button" @click="splitMode = false"
+                                   class="flex-1 border-2 border-gray-200 text-gray-600 hover:bg-gray-50 font-bold py-3 px-2 rounded-2xl transition-all text-sm">
+                                    Cancel Split
+                                </button>
+                            </div>
+
+                            <form x-show="!splitMode" action="{{ route('staff.orders.markAsPaid', $order['reference']) }}" method="POST"
+                                  onsubmit="return confirm('Confirm FULL payment of RM ' + amountRemaining.toFixed(2) + ' for Order #{{ $order['reference'] }}?')">
                                 @csrf
                                 @method('PATCH')
                                 <button type="submit"
@@ -156,7 +229,22 @@
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
                                     </svg>
-                                    Mark as Paid
+                                    Pay Remaining
+                                </button>
+                            </form>
+
+                            <form x-show="splitMode" style="display: none;" action="{{ route('staff.orders.payPartial', $order['reference']) }}" method="POST"
+                                  @submit.prevent="if(confirm('Confirm partial payment of RM ' + splitTotal.toFixed(2) + ' for Order #{{ $order['reference'] }}?')) $el.submit()">
+                                @csrf
+                                @method('PATCH')
+                                <template x-for="item in items" :key="item.index">
+                                    <input type="hidden" :name="'items['+item.index+']'" :value="item.payQty">
+                                </template>
+                                <button type="submit" :disabled="!hasValidSplit"
+                                    :class="hasValidSplit ? 'bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-500/20 transform hover:scale-[1.02] active:scale-95' : 'bg-gray-300 cursor-not-allowed'"
+                                    class="w-full text-white font-black py-4 px-6 rounded-2xl transition-all flex items-center justify-center gap-3">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                                    Confirm Split Payment
                                 </button>
                             </form>
                         </div>

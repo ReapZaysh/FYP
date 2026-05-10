@@ -23,6 +23,9 @@ Route::get('/c/login', [\App\Http\Controllers\Customer\Auth\LoginController::cla
 Route::post('/c/login', [\App\Http\Controllers\Customer\Auth\LoginController::class, 'store']);
 Route::get('/c/register', [\App\Http\Controllers\Customer\Auth\RegisterController::class, 'create'])->name('customer.register');
 Route::post('/c/register', [\App\Http\Controllers\Customer\Auth\RegisterController::class, 'store']);
+Route::get('/c/verify-otp', [\App\Http\Controllers\Customer\Auth\RegisterController::class, 'verifyOtpForm'])->name('customer.verify-otp');
+Route::post('/c/verify-otp', [\App\Http\Controllers\Customer\Auth\RegisterController::class, 'verifyOtpSubmit']);
+Route::post('/c/resend-otp', [\App\Http\Controllers\Customer\Auth\RegisterController::class, 'resendOtp']);
 
 Route::get('/menu/{table?}', [MenuController::class, 'index'])->name('customer.menu');
 Route::get('/cart', [CustomerOrderController::class, 'cart'])->name('customer.cart');
@@ -70,6 +73,7 @@ Route::middleware(['auth'])->prefix('staff')->name('staff.')->middleware('staff'
     Route::get('/cashier', [StaffOrderController::class, 'cashier'])->name('orders.cashier');
     Route::get('/paid-orders', [StaffOrderController::class, 'paidOrders'])->name('orders.paid');
     Route::patch('/orders/{reference}/pay', [StaffOrderController::class, 'markAsPaid'])->name('orders.markAsPaid');
+    Route::patch('/orders/{reference}/pay-partial', [StaffOrderController::class, 'payPartial'])->name('orders.payPartial');
     Route::get('/orders/{reference}/receipt', [StaffOrderController::class, 'receipt'])->name('orders.receipt');
 });
 

@@ -41,19 +41,21 @@ The suggested reading sequence is to start with the **Introduction (Section 1)**
 **bossku-house** is a new, self-contained web-based application designed to replace traditional paper-based ordering systems. It integrates with Firebase for real-time status updates and utilizes the Laravel framework for robust backend management.
 
 ### 2.2 Product Features
-The system includes:
-- **Customer Menu**: Browsing products by category.
+- **Customer Menu**: Browsing products by category with featured items.
 - **QR Table Scanning**: Automatic table identification via QR code.
-- **Cart Management**: Real-time cart updates.
+- **Cart Management**: Real-time cart updates and quantity control.
 - **Order Tracking**: Real-time order status tracking for customers.
-- **Order Management**: Staff dashboard for processing and updating orders.
-- **Analytics**: Admin dashboard for sales and performance monitoring.
-- **Category & Product Management**: Admin tools for managing the menu.
+- **Product Reviews**: Customer feedback and rating system.
+- **Reward System**: Points-based loyalty program for registered users.
+- **Order Management**: Staff dashboard for status updates and cashiering.
+- **Receipt Generation**: Printing/viewing digital receipts for paid orders.
+- **Analytics**: Admin dashboard with growth metrics and data export.
+- **Menu Management**: Admin tools for categories, products, and availability.
 
 ### 2.3 User Classes and Characteristics
-- **Customers**: Unauthenticated users who scan QR codes to browse and order.
-- **Staff**: Authenticated users responsible for preparing orders and updating their status.
-- **Admins**: Authenticated users with full control over the system, including menu management and analytics.
+- **Customers**: Unauthenticated or authenticated users who scan QR codes to browse and order. Authenticated customers can earn/redeem reward points.
+- **Staff**: Authenticated users responsible for preparing orders, updating status, and processing payments.
+- **Admins**: Authenticated users with full control over the system, including menu management, reward setup, analytics, and review moderation.
 
 ### 2.4 Operating Environment
 - **Web Server**: Apache/Nginx with PHP 8.2+.
@@ -109,8 +111,10 @@ Customers can browse the menu by categories (e.g., Drinks, Main Course) and add 
 
 #### 3.2.3 Functional Requirements
 - **REQ-4**: The menu shall display product names, descriptions, prices, and images.
-- **REQ-5**: The system shall allow customers to increase or decrease item quantities in the cart.
-- **REQ-6**: The system shall generate a unique reference number for every successfully placed order.
+- **REQ-5**: The system shall support "Featured" products to be highlighted on the menu.
+- **REQ-6**: The system shall support "Out of Stock" (Availability) toggles for products.
+- **REQ-7**: The system shall allow customers to increase or decrease item quantities in the cart.
+- **REQ-8**: The system shall generate a unique reference number for every successfully placed order.
 
 ### 3.3 Staff Order Processing
 #### 3.3.1 Description and Priority
@@ -118,8 +122,9 @@ Staff members can view incoming orders in real-time and update their status (e.g
 **Priority**: High
 
 #### 3.3.2 Functional Requirements
-- **REQ-7**: The system shall provide a dashboard that updates automatically when a new order is placed (via Firebase).
-- **REQ-8**: Staff shall be able to change order status to "Completed" once the food is served.
+- **REQ-9**: The system shall provide a dashboard that updates automatically when a new order is placed (via Firebase).
+- **REQ-10**: Staff shall be able to change order status to "Preparing", "Served", or "Completed".
+- **REQ-11**: Staff shall be able to mark an order as "Paid" and generate a digital receipt.
 
 ### 3.4 Administrative Management
 #### 3.4.1 Description and Priority
@@ -127,9 +132,22 @@ Admins can manage the menu items and view business analytics.
 **Priority**: Medium
 
 #### 3.4.2 Functional Requirements
-- **REQ-9**: Admins shall be able to create, read, update, and delete (CRUD) product categories.
-- **REQ-10**: Admins shall be able to CRUD products, including uploading images and setting prices.
-- **REQ-11**: The system shall provide a summary of total sales and popular items over a selected time period.
+- **REQ-12**: Admins shall be able to CRUD product categories and define their sort order.
+- **REQ-13**: Admins shall be able to CRUD products, including uploading images to Firebase and setting availability.
+- **REQ-14**: Admins shall be able to moderate (view/delete) customer product reviews.
+- **REQ-15**: Admins shall be able to manage the reward point system and available rewards.
+- **REQ-16**: The system shall provide a dashboard with revenue metrics, growth trends, and top-selling items.
+- **REQ-17**: The system shall allow admins to export analytics data to CSV/Excel formats.
+
+### 3.5 Customer Loyalty & Engagement
+#### 3.5.1 Description and Priority
+This module handles customer reviews and the loyalty reward system to increase user retention.
+**Priority**: Medium
+
+#### 3.5.2 Functional Requirements
+- **REQ-18**: The system shall allow customers to leave a star rating and text review for products.
+- **REQ-19**: The system shall track loyalty points for registered customers based on their order totals.
+- **REQ-20**: The system shall allow customers to redeem earned points for specific rewards.
 
 ---
 

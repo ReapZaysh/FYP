@@ -116,6 +116,38 @@ class OrderController extends Controller
     }
 
     /**
+     * Process a partial payment for an order.
+     */
+    public function payPartial(Request $request, $reference)
+    {
+        $request->validate([
+            'items' => 'required|array',
+            'items.*' => 'integer|min:0'
+        ]);
+
+        $result = $this->firebase->payPartialOrder($reference, $request->input('items'));
+
+        if (!$result) {
+            return redirect()->back()->with('error', 'Order not found.');
+        }
+
+        // If the order is now fully paid, award points
+        if ($result['status'] === 'paid' && isset($result['order']['customer_id'])) {
+            $pointsToAward = floor((float) ($result['order']['total_amount'] ?? 0));
+            if ($pointsToAward > 0) {
+                $this->firebase->addPoints($result['order']['customer_id'], $pointsToAward, $reference);
+            }
+            
+            return redirect()->back()
+                ->with('success', 'Order #' . $reference . ' has been fully paid.')
+                ->with('print_receipt', $reference);
+        }
+
+        return redirect()->back()
+            ->with('success', 'Partial payment recorded for Order #' . $reference . '.');
+    }
+
+    /**
      * Display a printable receipt for a specific order.
      */
     public function receipt($reference)

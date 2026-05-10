@@ -206,6 +206,53 @@ class FirebaseService
             ]);
     }
 
+    public function payPartialOrder($reference, $paidQuantities)
+    {
+        $order = $this->getOrder($reference);
+        if (!$order) return false;
+
+        $items = $order['items'] ?? [];
+        $allFullyPaid = true;
+
+        foreach ($items as $index => &$item) {
+            $orderedQty = (int)($item['quantity'] ?? 1);
+            $currentPaidQty = (int)($item['paid_quantity'] ?? 0);
+            
+            // Add newly paid quantity for this specific item index
+            $newPaymentQty = (int)($paidQuantities[$index] ?? 0);
+            $totalPaidQty = $currentPaidQty + $newPaymentQty;
+            
+            // Ensure we don't exceed ordered quantity
+            if ($totalPaidQty > $orderedQty) {
+                $totalPaidQty = $orderedQty;
+            }
+            
+            $item['paid_quantity'] = $totalPaidQty;
+
+            if ($totalPaidQty < $orderedQty) {
+                $allFullyPaid = false;
+            }
+        }
+
+        $order['items'] = $items;
+        
+        if ($allFullyPaid) {
+            $order['payment_status'] = 'paid';
+            $order['paid_at'] = now()->toIso8601String();
+        } else {
+            $order['payment_status'] = 'partially_paid';
+        }
+        
+        $order['updated_at'] = now()->toIso8601String();
+
+        $this->database->getReference('orders/' . $reference)->set($order);
+
+        return [
+            'status' => $order['payment_status'],
+            'order' => $order
+        ];
+    }
+
     // --- Reviews ---
 
     public function getReviews($productId)
