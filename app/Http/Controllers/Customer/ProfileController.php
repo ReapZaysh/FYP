@@ -40,4 +40,66 @@ class ProfileController extends Controller
             'loyaltyPoints' => $user->loyalty_points ?? 0
         ]);
     }
+
+    public function edit(Request $request)
+    {
+        return view('customer.profile-edit', [
+            'user' => $request->user(),
+        ]);
+    }
+
+    public function update(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:20'],
+        ]);
+
+        $user = $request->user();
+        
+        // Check for email uniqueness in Firebase
+        if ($validated['email'] !== $user->email) {
+            $existingUser = $this->firebase->getUserByEmail($validated['email']);
+            if ($existingUser && $existingUser['id'] !== $user->id) {
+                return back()->withErrors(['email' => 'The email has already been taken.']);
+            }
+        }
+
+        $userData = $this->firebase->getUser($user->id);
+        if (!$userData) {
+            return back()->withErrors(['error' => 'User not found.']);
+        }
+
+        $userData['name'] = $validated['name'];
+        $userData['email'] = $validated['email'];
+        $userData['phone'] = $validated['phone'];
+        $userData['updated_at'] = now()->toIso8601String();
+
+        $this->firebase->saveUser($user->id, $userData);
+
+        return back()->with('status', 'profile-updated');
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $validated = $request->validateWithBag('updatePassword', [
+            'current_password' => ['required', 'current_password'],
+            'password' => ['required', \Illuminate\Validation\Rules\Password::defaults(), 'confirmed'],
+        ]);
+
+        $user = $request->user();
+        $userData = $this->firebase->getUser($user->id);
+        
+        if (!$userData) {
+            return back()->withErrors(['error' => 'User not found.']);
+        }
+
+        $userData['password'] = \Illuminate\Support\Facades\Hash::make($validated['password']);
+        $userData['updated_at'] = now()->toIso8601String();
+
+        $this->firebase->saveUser($user->id, $userData);
+
+        return back()->with('status', 'password-updated');
+    }
 }

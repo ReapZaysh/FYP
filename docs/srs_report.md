@@ -115,6 +115,7 @@ Customers can browse the menu by categories (e.g., Drinks, Main Course) and add 
 - **REQ-6**: The system shall support "Out of Stock" (Availability) toggles for products.
 - **REQ-7**: The system shall allow customers to increase or decrease item quantities in the cart.
 - **REQ-8**: The system shall generate a unique reference number for every successfully placed order.
+- **REQ-9**: The system shall allow customers to add specific instructions or notes to their order during checkout.
 
 ### 3.3 Staff Order Processing
 #### 3.3.1 Description and Priority
@@ -122,9 +123,9 @@ Staff members can view incoming orders in real-time and update their status (e.g
 **Priority**: High
 
 #### 3.3.2 Functional Requirements
-- **REQ-9**: The system shall provide a dashboard that updates automatically when a new order is placed (via Firebase).
-- **REQ-10**: Staff shall be able to change order status to "Preparing", "Served", or "Completed".
-- **REQ-11**: Staff shall be able to mark an order as "Paid" and generate a digital receipt.
+- **REQ-10**: The system shall provide a dashboard that updates automatically when a new order is placed (via Firebase).
+- **REQ-11**: Staff shall be able to change order status to "Preparing", "Served", or "Completed".
+- **REQ-12**: Staff shall be able to mark an order as "Paid" and generate a digital receipt.
 
 ### 3.4 Administrative Management
 #### 3.4.1 Description and Priority
@@ -132,12 +133,12 @@ Admins can manage the menu items and view business analytics.
 **Priority**: Medium
 
 #### 3.4.2 Functional Requirements
-- **REQ-12**: Admins shall be able to CRUD product categories and define their sort order.
-- **REQ-13**: Admins shall be able to CRUD products, including uploading images to Firebase and setting availability.
-- **REQ-14**: Admins shall be able to moderate (view/delete) customer product reviews.
-- **REQ-15**: Admins shall be able to manage the reward point system and available rewards.
-- **REQ-16**: The system shall provide a dashboard with revenue metrics, growth trends, and top-selling items.
-- **REQ-17**: The system shall allow admins to export analytics data to CSV/Excel formats.
+- **REQ-13**: Admins shall be able to CRUD product categories and define their sort order.
+- **REQ-14**: Admins shall be able to CRUD products, including uploading images to Firebase and setting availability.
+- **REQ-15**: Admins shall be able to moderate (view/delete) customer product reviews.
+- **REQ-16**: Admins shall be able to manage the reward point system and available rewards.
+- **REQ-17**: The system shall provide a dashboard with revenue metrics, growth trends, and top-selling items.
+- **REQ-18**: The system shall allow admins to export analytics data to CSV/Excel formats.
 
 ### 3.5 Customer Loyalty & Engagement
 #### 3.5.1 Description and Priority
@@ -145,9 +146,9 @@ This module handles customer reviews and the loyalty reward system to increase u
 **Priority**: Medium
 
 #### 3.5.2 Functional Requirements
-- **REQ-18**: The system shall allow customers to leave a star rating and text review for products.
-- **REQ-19**: The system shall track loyalty points for registered customers based on their order totals.
-- **REQ-20**: The system shall allow customers to redeem earned points for specific rewards.
+- **REQ-19**: The system shall allow customers to leave a star rating and text review for products.
+- **REQ-20**: The system shall track loyalty points for registered customers based on their order totals.
+- **REQ-21**: The system shall allow customers to redeem earned points for specific rewards.
 
 ---
 

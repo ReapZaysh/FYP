@@ -41,6 +41,9 @@ Route::get('/rewards', [\App\Http\Controllers\Customer\RewardController::class, 
 Route::post('/rewards/redeem/{id}', [\App\Http\Controllers\Customer\RewardController::class, 'redeem'])->middleware('auth')->name('customer.rewards.redeem');
 
 Route::get('/my-profile', [CustomerProfileController::class, 'index'])->middleware('auth')->name('customer.profile');
+Route::get('/my-profile/edit', [CustomerProfileController::class, 'edit'])->middleware('auth')->name('customer.profile.edit');
+Route::patch('/my-profile', [CustomerProfileController::class, 'update'])->middleware('auth')->name('customer.profile.update');
+Route::put('/my-profile/password', [CustomerProfileController::class, 'updatePassword'])->middleware('auth')->name('customer.password.update');
 
 // Dashboard Redirection
 Route::get('/dashboard', function () {

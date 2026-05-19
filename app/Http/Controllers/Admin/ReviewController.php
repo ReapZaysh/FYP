@@ -24,7 +24,7 @@ class ReviewController extends Controller
         $groupedReviews = $reviews->map(function ($review) use ($products) {
             $product = $products->get($review['product_id']);
             $review['product_name'] = $product ? $product['name'] : 'Unknown Product';
-            $review['product_image'] = $product ? ($product['image_url'] ?? null) : null;
+            $review['product_image'] = $product ? ($product['image_path'] ?? null) : null;
             return $review;
         })->groupBy('product_id');
 

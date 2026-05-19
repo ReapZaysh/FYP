@@ -40,7 +40,7 @@
 | **Risk Number** | 4 (High) |
 | **Test Case Number** | TC-02 |
 | **Test Case Name** | Customer Login |
-| **Requirement Traceability** | REQ-19: Track loyalty points for registered customers. |
+| **Requirement Traceability** | REQ-20: Track loyalty points for registered customers. |
 | **Test Case Description** | This test case verifies that a registered customer can successfully log in using their credentials. |
 | **Item(s) to be tested** | |
 | 1 | Login page |
@@ -126,7 +126,7 @@
 | **Risk Number** | 4 (High) |
 | **Test Case Number** | TC-05 |
 | **Test Case Name** | Order Placement & Reference Tracking |
-| **Requirement Traceability** | REQ-8: Reference number generation for orders. |
+| **Requirement Traceability** | REQ-8, REQ-9: Reference number generation and Order Notes. |
 | **Test Case Description** | This test case verifies that an order can be successfully placed and tracked via a unique reference. |
 | **Item(s) to be tested** | |
 | 1 | Checkout Module |
@@ -155,7 +155,7 @@
 | **Risk Number** | 4 (High) |
 | **Test Case Number** | TC-06 |
 | **Test Case Name** | Product Review Submission |
-| **Requirement Traceability** | REQ-18: Customers can leave star ratings and reviews. |
+| **Requirement Traceability** | REQ-19: Customers can leave star ratings and reviews. |
 | **Test Case Description** | This test case verifies that customers can provide feedback on products. |
 | **Item(s) to be tested** | |
 | 1 | Review Submission Form |
@@ -182,7 +182,7 @@
 | **Risk Number** | 4 (High) |
 | **Test Case Number** | TC-07 |
 | **Test Case Name** | Reward Redemption System |
-| **Requirement Traceability** | REQ-20: Redeeming earned points for rewards. |
+| **Requirement Traceability** | REQ-21: Redeeming earned points for rewards. |
 | **Test Case Description** | This test case verifies that loyalty points can be redeemed for restaurant rewards. |
 | **Item(s) to be tested** | |
 | 1 | Reward Redemption Module |
@@ -212,7 +212,7 @@
 | **Risk Number** | 4 (High) |
 | **Test Case Number** | TC-08 |
 | **Test Case Name** | Real-time Order Management (Staff) |
-| **Requirement Traceability** | REQ-9, REQ-10: Firebase dashboard and status updates. |
+| **Requirement Traceability** | REQ-10, REQ-11: Firebase dashboard and status updates. |
 | **Test Case Description** | This test case verifies that staff can update order statuses in real-time. |
 | **Item(s) to be tested** | |
 | 1 | Staff Dashboard |
@@ -240,7 +240,7 @@
 | **Risk Number** | 4 (High) |
 | **Test Case Number** | TC-09 |
 | **Test Case Name** | Cashier & Receipt Generation |
-| **Requirement Traceability** | REQ-11: Payment processing and receipt generation. |
+| **Requirement Traceability** | REQ-12: Payment processing and receipt generation. |
 | **Test Case Description** | This test case verifies the payment workflow and receipt output. |
 | **Item(s) to be tested** | |
 | 1 | Cashier Module |
@@ -270,7 +270,7 @@
 | **Risk Number** | 4 (High) |
 | **Test Case Number** | TC-10 |
 | **Test Case Name** | Dashboard Analytics Overview (Admin) |
-| **Requirement Traceability** | REQ-16: Dashboard with metrics and growth trends. |
+| **Requirement Traceability** | REQ-17: Dashboard with metrics and growth trends. |
 | **Test Case Description** | This test case verifies that business metrics are correctly aggregated on the dashboard. |
 | **Item(s) to be tested** | |
 | 1 | Admin Dashboard Metrics |
@@ -297,7 +297,7 @@
 | **Risk Number** | 4 (High) |
 | **Test Case Number** | TC-11 |
 | **Test Case Name** | Product Management (CRUD with Image) |
-| **Requirement Traceability** | REQ-13: CRUD products with image uploads to Firebase. |
+| **Requirement Traceability** | REQ-14: CRUD products with image uploads to Firebase. |
 | **Test Case Description** | This test case verifies that products can be managed with cloud-stored images. |
 | **Item(s) to be tested** | |
 | 1 | Product Creation Form |
@@ -353,7 +353,7 @@
 | **Risk Number** | 4 (High) |
 | **Test Case Number** | TC-13 |
 | **Test Case Name** | Category Management & Sorting |
-| **Requirement Traceability** | REQ-12: CRUD categories and sort order. |
+| **Requirement Traceability** | REQ-13: CRUD categories and sort order. |
 | **Test Case Description** | This test case verifies category ordering on the navigation bar. |
 | **Item(s) to be tested** | |
 | 1 | Category CRUD |
@@ -380,7 +380,7 @@
 | **Risk Number** | 4 (High) |
 | **Test Case Number** | TC-14 |
 | **Test Case Name** | Admin Review Moderation |
-| **Requirement Traceability** | REQ-14: Moderate (delete) customer product reviews. |
+| **Requirement Traceability** | REQ-15: Moderate (delete) customer product reviews. |
 | **Test Case Description** | This test case verifies the moderation of user feedback. |
 | **Item(s) to be tested** | |
 | 1 | Review Management Dashboard |
@@ -406,7 +406,7 @@
 | **Risk Number** | 4 (High) |
 | **Test Case Number** | TC-15 |
 | **Test Case Name** | Admin Reward Management |
-| **Requirement Traceability** | REQ-15: Manage reward point system. |
+| **Requirement Traceability** | REQ-16: Manage reward point system. |
 | **Test Case Description** | This test case verifies the configuration of loyalty rewards. |
 | **Item(s) to be tested** | |
 | 1 | Reward CRUD Module |
@@ -432,7 +432,7 @@
 | **Risk Number** | 4 (High) |
 | **Test Case Number** | TC-16 |
 | **Test Case Name** | Admin Analytics Export |
-| **Requirement Traceability** | REQ-17: Export analytics to CSV/Excel. |
+| **Requirement Traceability** | REQ-18: Export analytics to CSV/Excel. |
 | **Test Case Description** | This test case verifies the data portability of sales metrics. |
 | **Item(s) to be tested** | |
 | 1 | Analytics Export Engine |
