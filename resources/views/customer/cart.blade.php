@@ -142,9 +142,9 @@
                             <input
                                 class="w-full bg-gray-800/50 border-2 border-gray-700 rounded-2xl py-4 px-6 text-white text-lg font-bold placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition"
                                 id="customer_name" name="customer_name" type="text" 
-                                placeholder="Enter your name"
+                                placeholder="Enter your name (Optional)"
                                 value="{{ auth()->check() ? auth()->user()->name : '' }}"
-                                {{ auth()->check() ? 'readonly' : 'required' }}>
+                                {{ auth()->check() ? 'readonly' : '' }}>
                         </div>
                         <div>
                             <label class="block text-gray-400 text-xs font-bold uppercase tracking-widest mb-3"

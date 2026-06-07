@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Bossku House – Use Case Diagram</title>
+<style>
+  body { margin:0; background:#0d1117; font-family:'Segoe UI',sans-serif; display:flex; flex-direction:column; align-items:center; padding:20px; color:#e2e8f0; }
+  h1 { font-size:1.6rem; background:linear-gradient(135deg,#f97316,#fb923c); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:4px; }
+  p { color:#64748b; margin-bottom:16px; font-size:.9rem; }
+  .wrap { background:#161b22; border:1px solid #30363d; border-radius:12px; padding:16px; width:100%; max-width:1800px; overflow-x:auto; box-shadow:0 20px 60px rgba(0,0,0,.6); }
+  .legend { display:flex; gap:20px; flex-wrap:wrap; justify-content:center; margin-top:14px; font-size:.82rem; color:#94a3b8; }
+  .legend span { display:flex; align-items:center; gap:6px; }
+  .lb { width:28px; height:2px; }
+</style>
+</head>
+<body>
+<h1>Bossku House — Use Case Diagram</h1>
+<p>QR-Based Digital Food Ordering System &nbsp;|&nbsp; FYP Documentation</p>
+<div class="wrap">
+<svg viewBox="0 0 1750 1020" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;min-width:900px">
+<defs>
+  <marker id="arr" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L8,4z" fill="#64748b"/></marker>
+  <marker id="open" markerWidth="10" markerHeight="10" refX="9" refY="4" orient="auto"><path d="M0,0 L9,4 L0,8" fill="none" stroke="#94a3b8" stroke-width="1.5"/></marker>
+  <filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+
+<!-- System Boundary -->
+<rect x="170" y="10" width="1410" height="1000" rx="14" fill="none" stroke="#3d4f6b" stroke-width="2" stroke-dasharray="10,5"/>
+<text x="875" y="36" text-anchor="middle" font-size="15" font-weight="700" fill="#94a3b8" letter-spacing="1">« system »  Bossku House – QR Digital Ordering System</text>
+
+<!-- Section: Customer Ordering (top-left) -->
+<rect x="185" y="50" width="390" height="535" rx="10" fill="#0d1f38" stroke="#1d4ed8" stroke-width="1" opacity=".7"/>
+<text x="380" y="72" text-anchor="middle" font-size="11" fill="#60a5fa" font-weight="600">Customer Ordering</text>
+
+<!-- Section: Auth Customer (bottom-left) -->
+<rect x="185" y="605" width="390" height="395" rx="10" fill="#0d2638" stroke="#0369a1" stroke-width="1" opacity=".7"/>
+<text x="380" y="627" text-anchor="middle" font-size="11" fill="#38bdf8" font-weight="600">Authenticated Customer</text>
+
+<!-- Section: Order Lifecycle (centre) -->
+<rect x="595" y="50" width="565" height="1000" rx="10" fill="#121820" stroke="#2d3748" stroke-width="1" opacity=".6"/>
+<text x="877" y="72" text-anchor="middle" font-size="11" fill="#94a3b8" font-weight="600">Order Lifecycle / Shared</text>
+
+<!-- Section: Staff (top-right) -->
+<rect x="1180" y="50" width="390" height="535" rx="10" fill="#0d2b20" stroke="#065f46" stroke-width="1" opacity=".7"/>
+<text x="1375" y="72" text-anchor="middle" font-size="11" fill="#34d399" font-weight="600">Staff Operations</text>
+
+<!-- Section: Admin (bottom-right) -->
+<rect x="1180" y="605" width="390" height="395" rx="10" fill="#1e0d38" stroke="#6d28d9" stroke-width="1" opacity=".7"/>
+<text x="1375" y="627" text-anchor="middle" font-size="11" fill="#c084fc" font-weight="600">Admin Management</text>
+
+<!-- ======== ACTORS ======== -->
+<!-- Guest Customer -->
+<g>
+  <circle cx="75" cy="220" r="20" fill="none" stroke="#60a5fa" stroke-width="2"/>
+  <line x1="75" y1="240" x2="75" y2="310" stroke="#60a5fa" stroke-width="2"/>
+  <line x1="42" y1="265" x2="108" y2="265" stroke="#60a5fa" stroke-width="2"/>
+  <line x1="75" y1="310" x2="48" y2="348" stroke="#60a5fa" stroke-width="2"/>
+  <line x1="75" y1="310" x2="102" y2="348" stroke="#60a5fa" stroke-width="2"/>
+  <text x="75" y="370" text-anchor="middle" font-size="12" font-weight="700" fill="#60a5fa">Guest</text>
+  <text x="75" y="386" text-anchor="middle" font-size="12" font-weight="700" fill="#60a5fa">Customer</text>
+</g>
+
+<!-- Authenticated Customer -->
+<g>
+  <circle cx="75" cy="700" r="20" fill="none" stroke="#38bdf8" stroke-width="2"/>
+  <line x1="75" y1="720" x2="75" y2="790" stroke="#38bdf8" stroke-width="2"/>
+  <line x1="42" y1="748" x2="108" y2="748" stroke="#38bdf8" stroke-width="2"/>
+  <line x1="75" y1="790" x2="48" y2="828" stroke="#38bdf8" stroke-width="2"/>
+  <line x1="75" y1="790" x2="102" y2="828" stroke="#38bdf8" stroke-width="2"/>
+  <text x="75" y="850" text-anchor="middle" font-size="12" font-weight="700" fill="#38bdf8">Authenticated</text>
+  <text x="75" y="866" text-anchor="middle" font-size="12" font-weight="700" fill="#38bdf8">Customer</text>
+</g>
+
+<!-- Generalization arrow: Auth → Guest -->
+<line x1="75" y1="698" x2="75" y2="408" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#open)"/>
+<text x="52" y="560" font-size="10" fill="#64748b" transform="rotate(-90,52,560)">«generalization»</text>
+
+<!-- Staff -->
+<g>
+  <circle cx="1675" cy="230" r="20" fill="none" stroke="#34d399" stroke-width="2"/>
+  <line x1="1675" y1="250" x2="1675" y2="320" stroke="#34d399" stroke-width="2"/>
+  <line x1="1642" y1="278" x2="1708" y2="278" stroke="#34d399" stroke-width="2"/>
+  <line x1="1675" y1="320" x2="1648" y2="358" stroke="#34d399" stroke-width="2"/>
+  <line x1="1675" y1="320" x2="1702" y2="358" stroke="#34d399" stroke-width="2"/>
+  <text x="1675" y="378" text-anchor="middle" font-size="12" font-weight="700" fill="#34d399">Staff</text>
+</g>
+
+<!-- Admin -->
+<g>
+  <circle cx="1675" cy="720" r="20" fill="none" stroke="#c084fc" stroke-width="2"/>
+  <line x1="1675" y1="740" x2="1675" y2="810" stroke="#c084fc" stroke-width="2"/>
+  <line x1="1642" y1="768" x2="1708" y2="768" stroke="#c084fc" stroke-width="2"/>
+  <line x1="1675" y1="810" x2="1648" y2="848" stroke="#c084fc" stroke-width="2"/>
+  <line x1="1675" y1="810" x2="1702" y2="848" stroke="#c084fc" stroke-width="2"/>
+  <text x="1675" y="868" text-anchor="middle" font-size="12" font-weight="700" fill="#c084fc">Admin</text>
+</g>
+
+<!-- ======== USE CASES ======== -->
+<!-- Helper macro: ellipse + label -->
+<!-- Customer Ordering UCs -->
+<ellipse cx="380" cy="105" rx="120" ry="23" fill="#0a1628" stroke="#3b82f6" stroke-width="1.5"/>
+<text x="380" y="110" text-anchor="middle" font-size="12" fill="#93c5fd">Scan QR Code</text>
+
+<ellipse cx="380" cy="168" rx="120" ry="23" fill="#0a1628" stroke="#3b82f6" stroke-width="1.5"/>
+<text x="380" y="173" text-anchor="middle" font-size="12" fill="#93c5fd">Browse Menu by Category</text>
+
+<ellipse cx="380" cy="231" rx="120" ry="23" fill="#0a1628" stroke="#3b82f6" stroke-width="1.5"/>
+<text x="380" y="236" text-anchor="middle" font-size="12" fill="#93c5fd">Add Item to Cart</text>
+
+<ellipse cx="380" cy="294" rx="120" ry="23" fill="#0a1628" stroke="#3b82f6" stroke-width="1.5"/>
+<text x="380" y="292" text-anchor="middle" font-size="11" fill="#93c5fd">Manage Cart</text>
+<text x="380" y="305" text-anchor="middle" font-size="11" fill="#93c5fd">(Adjust Qty / Remove)</text>
+
+<ellipse cx="380" cy="362" rx="120" ry="23" fill="#0a1628" stroke="#3b82f6" stroke-width="1.5"/>
+<text x="380" y="367" text-anchor="middle" font-size="12" fill="#93c5fd">Place Order</text>
+
+<ellipse cx="380" cy="430" rx="120" ry="23" fill="#0a1628" stroke="#3b82f6" stroke-width="1.5"/>
+<text x="380" y="435" text-anchor="middle" font-size="12" fill="#93c5fd">Track Order Status</text>
+
+<ellipse cx="380" cy="498" rx="120" ry="23" fill="#0a1628" stroke="#3b82f6" stroke-width="1.5"/>
+<text x="380" y="503" text-anchor="middle" font-size="12" fill="#93c5fd">View Rewards Catalogue</text>
+
+<!-- Auth Customer UCs -->
+<ellipse cx="290" cy="665" rx="95" ry="23" fill="#071c28" stroke="#0284c7" stroke-width="1.5"/>
+<text x="290" y="670" text-anchor="middle" font-size="12" fill="#7dd3fc">Register Account</text>
+
+<ellipse cx="290" cy="728" rx="95" ry="23" fill="#071c28" stroke="#0284c7" stroke-width="1.5"/>
+<text x="290" y="733" text-anchor="middle" font-size="12" fill="#7dd3fc">Login (Customer)</text>
+
+<ellipse cx="480" cy="665" rx="95" ry="23" fill="#071c28" stroke="#0284c7" stroke-width="1.5"/>
+<text x="480" y="670" text-anchor="middle" font-size="12" fill="#7dd3fc">Earn Loyalty Points</text>
+
+<ellipse cx="480" cy="728" rx="95" ry="23" fill="#071c28" stroke="#0284c7" stroke-width="1.5"/>
+<text x="480" y="733" text-anchor="middle" font-size="12" fill="#7dd3fc">Redeem Reward Item</text>
+
+<ellipse cx="380" cy="800" rx="110" ry="23" fill="#071c28" stroke="#0284c7" stroke-width="1.5"/>
+<text x="380" y="805" text-anchor="middle" font-size="12" fill="#7dd3fc">Submit Product Review</text>
+
+<ellipse cx="380" cy="868" rx="110" ry="23" fill="#071c28" stroke="#0284c7" stroke-width="1.5"/>
+<text x="380" y="873" text-anchor="middle" font-size="12" fill="#7dd3fc">View My Profile</text>
+
+<ellipse cx="380" cy="942" rx="110" ry="23" fill="#071c28" stroke="#0284c7" stroke-width="1.5"/>
+<text x="380" y="947" text-anchor="middle" font-size="12" fill="#7dd3fc">Edit Profile / Change Password</text>
+
+<!-- Centre / Shared UCs -->
+<ellipse cx="877" cy="110" rx="130" ry="23" fill="#111820" stroke="#475569" stroke-width="1.5"/>
+<text x="877" y="115" text-anchor="middle" font-size="12" fill="#cbd5e1">Receive Real-time Order Updates</text>
+
+<ellipse cx="877" cy="178" rx="130" ry="23" fill="#111820" stroke="#475569" stroke-width="1.5"/>
+<text x="877" y="183" text-anchor="middle" font-size="12" fill="#cbd5e1">Generate Unique Order Reference</text>
+
+<ellipse cx="877" cy="246" rx="130" ry="23" fill="#111820" stroke="#475569" stroke-width="1.5"/>
+<text x="877" y="251" text-anchor="middle" font-size="12" fill="#cbd5e1">View Order History</text>
+
+<ellipse cx="877" cy="314" rx="130" ry="23" fill="#111820" stroke="#475569" stroke-width="1.5"/>
+<text x="877" y="319" text-anchor="middle" font-size="12" fill="#cbd5e1">Generate Sales Report</text>
+
+<ellipse cx="877" cy="400" rx="130" ry="23" fill="#111820" stroke="#475569" stroke-width="1.5"/>
+<text x="877" y="398" text-anchor="middle" font-size="11" fill="#cbd5e1">Login (Staff / Admin)</text>
+<text x="877" y="412" text-anchor="middle" font-size="11" fill="#cbd5e1">via Laravel Auth</text>
+
+<!-- Staff UCs -->
+<ellipse cx="1375" cy="105" rx="115" ry="23" fill="#091f17" stroke="#059669" stroke-width="1.5"/>
+<text x="1375" y="110" text-anchor="middle" font-size="12" fill="#6ee7b7">View Real-time Orders</text>
+
+<ellipse cx="1375" cy="173" rx="115" ry="23" fill="#091f17" stroke="#059669" stroke-width="1.5"/>
+<text x="1375" y="171" text-anchor="middle" font-size="11" fill="#6ee7b7">Update Order Status</text>
+<text x="1375" y="184" text-anchor="middle" font-size="11" fill="#6ee7b7">(Preparing / Served / Cancel)</text>
+
+<ellipse cx="1375" cy="241" rx="115" ry="23" fill="#091f17" stroke="#059669" stroke-width="1.5"/>
+<text x="1375" y="246" text-anchor="middle" font-size="12" fill="#6ee7b7">Access Cashier View</text>
+
+<ellipse cx="1375" cy="309" rx="115" ry="23" fill="#091f17" stroke="#059669" stroke-width="1.5"/>
+<text x="1375" y="314" text-anchor="middle" font-size="12" fill="#6ee7b7">Mark Order as Paid</text>
+
+<ellipse cx="1375" cy="377" rx="115" ry="23" fill="#091f17" stroke="#059669" stroke-width="1.5"/>
+<text x="1375" y="382" text-anchor="middle" font-size="12" fill="#6ee7b7">Generate PDF Receipt</text>
+
+<ellipse cx="1375" cy="445" rx="115" ry="23" fill="#091f17" stroke="#059669" stroke-width="1.5"/>
+<text x="1375" y="450" text-anchor="middle" font-size="12" fill="#6ee7b7">View Paid Orders</text>
+
+<!-- Admin UCs -->
+<ellipse cx="1290" cy="665" rx="100" ry="23" fill="#130a28" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="1290" y="670" text-anchor="middle" font-size="12" fill="#d8b4fe">View Admin Dashboard</text>
+
+<ellipse cx="1460" cy="665" rx="100" ry="23" fill="#130a28" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="1460" y="670" text-anchor="middle" font-size="12" fill="#d8b4fe">Manage Categories</text>
+
+<ellipse cx="1290" cy="733" rx="100" ry="23" fill="#130a28" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="1290" y="738" text-anchor="middle" font-size="12" fill="#d8b4fe">Manage Products</text>
+
+<ellipse cx="1460" cy="733" rx="100" ry="23" fill="#130a28" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="1460" y="738" text-anchor="middle" font-size="12" fill="#d8b4fe">Manage Rewards Catalog</text>
+
+<ellipse cx="1290" cy="801" rx="100" ry="23" fill="#130a28" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="1290" y="806" text-anchor="middle" font-size="12" fill="#d8b4fe">Moderate Reviews</text>
+
+<ellipse cx="1460" cy="801" rx="100" ry="23" fill="#130a28" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="1460" y="806" text-anchor="middle" font-size="12" fill="#d8b4fe">View Analytics</text>
+
+<ellipse cx="1375" cy="880" rx="115" ry="23" fill="#130a28" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="1375" y="885" text-anchor="middle" font-size="12" fill="#d8b4fe">Export Reports (CSV / PDF)</text>
+
+<ellipse cx="1375" cy="952" rx="115" ry="23" fill="#130a28" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="1375" y="957" text-anchor="middle" font-size="12" fill="#d8b4fe">Manage QR Table Codes</text>
+
+<!-- ======== ASSOCIATIONS ======== -->
+<!-- Guest Customer → UCs -->
+<line x1="130" y1="220" x2="258" y2="105" stroke="#3b82f6" stroke-width="1.2"/>
+<line x1="130" y1="235" x2="258" y2="168" stroke="#3b82f6" stroke-width="1.2"/>
+<line x1="130" y1="248" x2="258" y2="231" stroke="#3b82f6" stroke-width="1.2"/>
+<line x1="130" y1="260" x2="258" y2="294" stroke="#3b82f6" stroke-width="1.2"/>
+<line x1="130" y1="270" x2="258" y2="362" stroke="#3b82f6" stroke-width="1.2"/>
+<line x1="130" y1="280" x2="258" y2="430" stroke="#3b82f6" stroke-width="1.2"/>
+<line x1="130" y1="290" x2="258" y2="498" stroke="#3b82f6" stroke-width="1.2"/>
+
+<!-- Guest Customer → Shared centre -->
+<line x1="130" y1="248" x2="745" y2="110" stroke="#3b82f6" stroke-width="1" stroke-dasharray="4,3" opacity=".5"/>
+
+<!-- Auth Customer → Auth UCs -->
+<line x1="130" y1="700" x2="193" y2="665" stroke="#0284c7" stroke-width="1.2"/>
+<line x1="130" y1="715" x2="193" y2="728" stroke="#0284c7" stroke-width="1.2"/>
+<line x1="130" y1="730" x2="383" y2="665" stroke="#0284c7" stroke-width="1.2"/>
+<line x1="130" y1="745" x2="383" y2="728" stroke="#0284c7" stroke-width="1.2"/>
+<line x1="130" y1="758" x2="268" y2="800" stroke="#0284c7" stroke-width="1.2"/>
+<line x1="130" y1="770" x2="268" y2="868" stroke="#0284c7" stroke-width="1.2"/>
+<line x1="130" y1="782" x2="268" y2="942" stroke="#0284c7" stroke-width="1.2"/>
+
+<!-- Auth Customer → Shared -->
+<line x1="130" y1="700" x2="745" y2="246" stroke="#0284c7" stroke-width="1" stroke-dasharray="4,3" opacity=".5"/>
+
+<!-- Staff → UCs -->
+<line x1="1618" y1="230" x2="1492" y2="105" stroke="#059669" stroke-width="1.2"/>
+<line x1="1618" y1="245" x2="1492" y2="173" stroke="#059669" stroke-width="1.2"/>
+<line x1="1618" y1="258" x2="1492" y2="241" stroke="#059669" stroke-width="1.2"/>
+<line x1="1618" y1="270" x2="1492" y2="309" stroke="#059669" stroke-width="1.2"/>
+<line x1="1618" y1="282" x2="1492" y2="377" stroke="#059669" stroke-width="1.2"/>
+<line x1="1618" y1="294" x2="1492" y2="445" stroke="#059669" stroke-width="1.2"/>
+<!-- Staff → Shared -->
+<line x1="1618" y1="248" x2="1009" y2="246" stroke="#059669" stroke-width="1" stroke-dasharray="4,3" opacity=".5"/>
+<line x1="1618" y1="260" x2="1009" y2="314" stroke="#059669" stroke-width="1" stroke-dasharray="4,3" opacity=".5"/>
+<line x1="1618" y1="272" x2="1009" y2="400" stroke="#059669" stroke-width="1.2"/>
+
+<!-- Admin → UCs -->
+<line x1="1618" y1="720" x2="1392" y2="665" stroke="#7c3aed" stroke-width="1.2"/>
+<line x1="1618" y1="735" x2="1562" y2="665" stroke="#7c3aed" stroke-width="1.2"/>
+<line x1="1618" y1="748" x2="1392" y2="733" stroke="#7c3aed" stroke-width="1.2"/>
+<line x1="1618" y1="760" x2="1562" y2="733" stroke="#7c3aed" stroke-width="1.2"/>
+<line x1="1618" y1="772" x2="1392" y2="801" stroke="#7c3aed" stroke-width="1.2"/>
+<line x1="1618" y1="784" x2="1562" y2="801" stroke="#7c3aed" stroke-width="1.2"/>
+<line x1="1618" y1="800" x2="1492" y2="880" stroke="#7c3aed" stroke-width="1.2"/>
+<line x1="1618" y1="815" x2="1492" y2="952" stroke="#7c3aed" stroke-width="1.2"/>
+<!-- Admin → Shared -->
+<line x1="1618" y1="720" x2="1009" y2="400" stroke="#7c3aed" stroke-width="1" stroke-dasharray="4,3" opacity=".5"/>
+
+<!-- ======== INCLUDE / EXTEND RELATIONSHIPS ======== -->
+<!-- Place Order <<includes>> Generate Unique Ref -->
+<line x1="502" y1="362" x2="745" y2="178" stroke="#fbbf24" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+<text x="590" y="248" font-size="10" fill="#fbbf24" transform="rotate(-30,590,248)">«includes»</text>
+
+<!-- Place Order <<includes>> Receive Real-time Updates (via Firebase) -->
+<line x1="502" y1="370" x2="745" y2="110" stroke="#fbbf24" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+<text x="550" y="205" font-size="10" fill="#fbbf24" transform="rotate(-25,550,205)">«includes»</text>
+
+<!-- Mark as Paid <<includes>> Generate PDF Receipt -->
+<line x1="1375" y1="332" x2="1375" y2="352" stroke="#fbbf24" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+<text x="1382" y="346" font-size="10" fill="#fbbf24">«includes»</text>
+
+<!-- Export Reports <<extends>> View Analytics -->
+<line x1="1375" y1="857" x2="1460" y2="825" stroke="#f87171" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+<text x="1375" y="845" font-size="10" fill="#f87171">«extends»</text>
+
+<!-- Generate Sales Report <<extends>> View Order History -->
+<line x1="877" y1="291" x2="877" y2="269" stroke="#f87171" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+<text x="884" y="284" font-size="10" fill="#f87171">«extends»</text>
+
+<!-- Submit Review <<extends>> Place Order -->
+<line x1="380" y1="777" x2="380" y2="455" stroke="#f87171" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+<text x="387" y="620" font-size="10" fill="#f87171">«extends»</text>
+
+<!-- Earn Loyalty Points <<extends>> Place Order -->
+<line x1="480" y1="642" x2="416" y2="387" stroke="#f87171" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+<text x="460" y="510" font-size="10" fill="#f87171" transform="rotate(-70,460,510)">«extends»</text>
+
+</svg>
+</div>
+
+<div class="legend">
+  <span><svg width="28" height="12"><line x1="0" y1="6" x2="28" y2="6" stroke="#3b82f6" stroke-width="2"/></svg> Guest Customer association</span>
+  <span><svg width="28" height="12"><line x1="0" y1="6" x2="28" y2="6" stroke="#0284c7" stroke-width="2"/></svg> Auth Customer association</span>
+  <span><svg width="28" height="12"><line x1="0" y1="6" x2="28" y2="6" stroke="#059669" stroke-width="2"/></svg> Staff association</span>
+  <span><svg width="28" height="12"><line x1="0" y1="6" x2="28" y2="6" stroke="#7c3aed" stroke-width="2"/></svg> Admin association</span>
+  <span><svg width="28" height="12"><line x1="0" y1="6" x2="28" y2="6" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="4,2"/></svg> «includes»</span>
+  <span><svg width="28" height="12"><line x1="0" y1="6" x2="28" y2="6" stroke="#f87171" stroke-width="1.5" stroke-dasharray="4,2"/></svg> «extends»</span>
+  <span><svg width="28" height="12"><line x1="0" y1="6" x2="28" y2="6" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,3"/></svg> «generalization»</span>
+</div>
+</body>
+</html>

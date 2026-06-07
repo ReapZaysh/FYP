@@ -157,7 +157,7 @@ class OrderController extends Controller
         $orderData = [
             'reference' => $orderReference,
             'table_number' => $tableNumber,
-            'customer_name' => $request->input('customer_name', 'Guest'),
+            'customer_name' => $request->filled('customer_name') ? $request->input('customer_name') : 'Guest',
             'customer_id' => auth()->check() ? auth()->id() : null,
             'order_note' => $orderNote,
             'total_amount' => (float) $total,

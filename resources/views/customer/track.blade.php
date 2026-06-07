@@ -143,6 +143,58 @@
             }
         });
 
+        // Request Notification permission on page load
+        if ('Notification' in window) {
+            if (Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+                Notification.requestPermission();
+            }
+        }
+
+        // Web Audio API helper to play a clean, file-less chime sound
+        function playNotificationSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const playBeep = (freq, startTime, duration) => {
+                    const osc = audioCtx.createOscillator();
+                    const gainNode = audioCtx.createGain();
+                    
+                    osc.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
+                    
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, startTime);
+                    
+                    gainNode.gain.setValueAtTime(0.3, startTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+                    
+                    osc.start(startTime);
+                    osc.stop(startTime + duration);
+                };
+                
+                const now = audioCtx.currentTime;
+                playBeep(523.25, now, 0.3); // C5
+                playBeep(659.25, now + 0.15, 0.4); // E5
+            } catch (e) {
+                console.error("Web Audio API not supported or blocked by browser policies:", e);
+            }
+        }
+
+        // HTML5 Web Notifications helper
+        function showNotification(title, body) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                try {
+                    new Notification(title, {
+                        body: body,
+                        icon: "/images/logo.png"
+                    });
+                } catch (e) {
+                    console.error("Failed to trigger Web Notification:", e);
+                }
+            }
+        }
+
+        let lastStatus = '{{ $order['status'] }}';
+
         /**
          * Monitor the status of this specific order
          * When it changes in Firebase, we update the Alpine.js state
@@ -160,11 +212,26 @@
                 } 
             }));
 
-            // If the status has actually changed from what's on the page, trigger a visual "ping" animation
-            if (data.status !== '{{ $order['status'] }}') {
+            // If the status has actually changed, trigger visual and physical alerts
+            if (data.status !== lastStatus) {
                 console.log("Status update detected:", data.status);
                 statusDot.classList.add('animate-ping');
                 setTimeout(() => statusDot.classList.remove('animate-ping'), 2000);
+
+                if (data.status === 'completed') {
+                    // 1. Ring (Sound Chime)
+                    playNotificationSound();
+
+                    // 2. Vibrate (200ms ring, 100ms pause, 200ms ring)
+                    if ('vibrate' in navigator) {
+                        navigator.vibrate([200, 100, 200]);
+                    }
+
+                    // 3. Send Notification
+                    showNotification("Order Complete! 🍽️", `Your order #${data.reference} is ready! Please proceed to the counter.`);
+                }
+
+                lastStatus = data.status;
             }
         });
     </script>

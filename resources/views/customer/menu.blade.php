@@ -222,16 +222,7 @@
 
         <!-- Menu Categories -->
         <div class="max-w-7xl mx-auto px-4 pb-12">
-            <!-- Navigation Chips -->
-            <div class="sticky top-20 bg-gray-100/80 dark:bg-gray-950/80 backdrop-blur-md z-40 py-3 mb-6 overflow-x-auto whitespace-nowrap scrollbar-hide transition-colors duration-300">
-                @foreach($categoriesWithProducts as $id => $category)
-                    @if(count($category['products']) > 0)
-                        <a href="#cat-{{ $id }}" 
-                           x-show="hasVisibleProducts({{ json_encode($category['products']) }})"
-                           class="inline-block px-5 py-2 mr-2 bg-white dark:bg-gray-800 rounded-full shadow-sm text-gray-700 dark:text-gray-300 font-semibold hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 text-sm transition">{{ $category['name'] }}</a>
-                    @endif
-                @endforeach
-            </div>
+
 
             @foreach($categoriesWithProducts as $catId => $category)
                 @if(count($category['products']) > 0)
