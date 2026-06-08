@@ -1,15 +1,19 @@
 # Bossku House Data Structure Specifications
 
-This document outlines the complete data structure of the **Bossku House** project. The application utilizes a hybrid database architecture:
-1. **Local SQLite Database (Relational Data Model via Laravel Eloquent)**: Used for local session persistence, job queue management, local relational model structure, and system caching.
-2. **Firebase Realtime Database (NoSQL JSON Data Model)**: Used for live-catalog synchronization, active order tracking, loyalty points updates, rewards, customer reviews, and real-time push notification tracking.
+This document outlines the complete data structure of the **Bossku House** project. The application utilizes a hybrid architecture that separates live application state from background framework infrastructure:
+
+1. **Firebase Realtime Database (NoSQL JSON Data Model)**: **The primary operational database.** All live application logic—including menu items (categories/products), user authentication, orders, loyalty points, vouchers, rewards, reviews, and real-time tracking—reads from and writes directly to Firebase.
+2. **Local SQLite Database (Relational Data Model)**: **Used strictly for framework background services and initial bootstrapping.** The application logic does not query or save dynamic business data here. Instead, SQLite persists framework infrastructure (Laravel sessions, cache locks, and background job queues) and holds the original seeded catalog data that was migrated to Firebase.
 3. **Web Browser LocalStorage**: Used on the client-side to persist order references and tracking statuses for guest users across page navigation.
 
 ---
 
 ## 1. Local SQLite Database Schema
 
-The following tables define the relational database structure managed via Laravel migrations.
+The local SQLite database (`database/database.sqlite`) is managed via Laravel migrations. 
+
+> [!NOTE]
+> The tables below for `users`, `categories`, `products`, `orders`, and `order_items` represent the historical/local relational structure. While they exist in the codebase, the active application routes all transactions for these models directly to Firebase. The remaining tables (`sessions`, `cache`, `jobs`, etc.) are actively used in the background by Laravel.
 
 ### Table: `users`
 Stores user profile credentials, identity, contact information, and roles.
