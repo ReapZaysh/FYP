@@ -102,6 +102,32 @@
         </div>
     </div>
 
+    {{-- Save this order to localStorage for the bottom navbar cross-page tracking --}}
+    <script>
+        (function() {
+            const STORAGE_KEY = 'bossku_tracked_orders';
+            const orderData = {
+                reference: '{{ $order["reference"] }}',
+                status: '{{ $order["status"] }}',
+                payment_status: '{{ $order["payment_status"] ?? "unpaid" }}',
+                total_amount: {{ (float)($order['total_amount'] ?? 0) }},
+                created_at: '{{ $order["created_at"] ?? "" }}'
+            };
+            try {
+                let orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+                const idx = orders.findIndex(o => o.reference === orderData.reference);
+                if (idx >= 0) {
+                    orders[idx] = Object.assign({}, orders[idx], orderData);
+                } else {
+                    orders.unshift(orderData);
+                    orders = orders.slice(0, 15); // keep only last 15
+                }
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+                window.dispatchEvent(new CustomEvent('orders-updated'));
+            } catch(e) {}
+        })();
+    </script>
+
     {{-- Firebase Real-time Status listener script --}}
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -211,6 +237,19 @@
                     payment_status: data.payment_status ?? 'unpaid'
                 } 
             }));
+
+            // Keep localStorage in sync so the navbar tracking tab reflects latest status
+            try {
+                const LS_KEY = 'bossku_tracked_orders';
+                let lsOrders = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+                const lsIdx = lsOrders.findIndex(o => o.reference === '{{ $order["reference"] }}');
+                if (lsIdx >= 0) {
+                    lsOrders[lsIdx].status = data.status;
+                    lsOrders[lsIdx].payment_status = data.payment_status ?? 'unpaid';
+                    localStorage.setItem(LS_KEY, JSON.stringify(lsOrders));
+                    window.dispatchEvent(new CustomEvent('orders-updated'));
+                }
+            } catch(e) {}
 
             // If the status has actually changed, trigger visual and physical alerts
             if (data.status !== lastStatus) {
