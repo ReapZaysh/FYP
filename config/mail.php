@@ -62,7 +62,7 @@ return [
         ],
 
         'resend' => [
-            'transport' => 'resend-http',
+            'transport' => 'resend',
         ],
 
         'sendmail' => [
