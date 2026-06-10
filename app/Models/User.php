@@ -15,6 +15,18 @@ class User extends Authenticatable implements CanResetPasswordContract
     use HasFactory, Notifiable, CanResetPassword;
 
     /**
+     * The "type" of the primary key ID.
+     * Set to string to prevent UUID being cast to integer.
+     */
+    protected $keyType = 'string';
+
+    /**
+     * Indicates if the model's ID is auto-incrementing.
+     * Disabled because we use UUIDs from Firebase.
+     */
+    public $incrementing = false;
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
