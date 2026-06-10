@@ -14,7 +14,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(\Kreait\Laravel\Firebase\FirebaseProjectManager::class, function ($app) {
+            return new \App\Extensions\CustomFirebaseProjectManager($app, $app->make('config'));
+        });
     }
 
     /**
@@ -29,13 +31,5 @@ class AppServiceProvider extends ServiceProvider
         Auth::provider('firebase', function ($app, array $config) {
             return new FirebaseUserProvider($app->make(FirebaseService::class));
         });
-
-        // Force Firebase requests to use IPv4 to avoid OpenSSL SSL_connect syscall errors on Railway
-        $middlewares = config('firebase.projects.app.http_client_options.guzzle_middlewares', []);
-        $middlewares[] = [
-            'middleware' => new \App\Http\Middleware\GuzzleForceIpv4Middleware(),
-            'name' => 'force_ipv4',
-        ];
-        config(['firebase.projects.app.http_client_options.guzzle_middlewares' => $middlewares]);
     }
 }
