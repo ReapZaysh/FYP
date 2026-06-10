@@ -62,6 +62,11 @@ class RegisterController extends Controller
             'user_data' => $userData
         ], now()->addMinutes(10));
 
+        // Log OTP prominently for easy retrieval in Railway Deploy Logs
+        \Illuminate\Support\Facades\Log::info('========== OTP CODE ==========');
+        \Illuminate\Support\Facades\Log::info("OTP for {$request->email}: {$otp}");
+        \Illuminate\Support\Facades\Log::info('==============================');
+
         // Send Email
         Mail::to($request->email)->send(new RegistrationOtpMail($otp, $request->name));
 
@@ -139,6 +144,11 @@ class RegisterController extends Controller
         // Update cache
         $cachedData['otp'] = $newOtp;
         Cache::put($cacheKey, $cachedData, now()->addMinutes(10));
+
+        // Log new OTP prominently for easy retrieval in Railway Deploy Logs
+        \Illuminate\Support\Facades\Log::info('========== OTP CODE (RESEND) ==========');
+        \Illuminate\Support\Facades\Log::info("OTP for {$email}: {$newOtp}");
+        \Illuminate\Support\Facades\Log::info('=======================================');
 
         // Send Email
         Mail::to($email)->send(new RegistrationOtpMail($newOtp, $cachedData['user_data']['name']));

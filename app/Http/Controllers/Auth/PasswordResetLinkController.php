@@ -54,6 +54,11 @@ class PasswordResetLinkController extends Controller
             'email' => $request->email,
         ], false));
 
+        // Log reset URL prominently for easy retrieval in Railway Deploy Logs
+        \Illuminate\Support\Facades\Log::info('========== PASSWORD RESET LINK ==========');
+        \Illuminate\Support\Facades\Log::info("Reset URL for {$request->email}: {$resetUrl}");
+        \Illuminate\Support\Facades\Log::info('=========================================');
+
         // Send email
         \Illuminate\Support\Facades\Mail::to($request->email)
             ->send(new PasswordResetMail($resetUrl, $user['name'] ?? 'User'));
