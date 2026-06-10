@@ -29,5 +29,11 @@ class AppServiceProvider extends ServiceProvider
         Auth::provider('firebase', function ($app, array $config) {
             return new FirebaseUserProvider($app->make(FirebaseService::class));
         });
+
+        \Illuminate\Support\Facades\Mail::extend('resend-http', function (array $config = []) {
+            return new \App\Mail\Transport\ResendHttpTransport(
+                config('services.resend.key')
+            );
+        });
     }
 }
