@@ -316,6 +316,30 @@ class FirebaseService
         return "https://firebasestorage.googleapis.com/v0/b/{$bucketName}/o/" . urlencode($filename) . "?alt=media";
     }
 
+    // --- Password Reset Tokens (Firebase-backed, replaces password_reset_tokens table) ---
+
+    public function savePasswordResetToken($email, $token)
+    {
+        $key = 'password_resets/' . str_replace(['.', '#', '$', '[', ']'], '_', $email);
+        $this->database->getReference($key)->set([
+            'email'      => $email,
+            'token'      => hash('sha256', $token),
+            'created_at' => now()->toIso8601String(),
+        ]);
+    }
+
+    public function getPasswordResetToken($email)
+    {
+        $key = 'password_resets/' . str_replace(['.', '#', '$', '[', ']'], '_', $email);
+        return $this->database->getReference($key)->getValue();
+    }
+
+    public function deletePasswordResetToken($email)
+    {
+        $key = 'password_resets/' . str_replace(['.', '#', '$', '[', ']'], '_', $email);
+        $this->database->getReference($key)->remove();
+    }
+
     public function deleteImage($url)
     {
         if (empty($url) || !str_contains($url, 'firebasestorage.googleapis.com')) {

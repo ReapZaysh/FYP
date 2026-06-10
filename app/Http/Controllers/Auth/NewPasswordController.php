@@ -3,13 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Services\FirebaseService;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
@@ -33,44 +31,58 @@ class NewPasswordController extends Controller
 
     /**
      * Handle an incoming new password request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
+     * Validates token from Firebase and saves new password to Firebase.
      */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'token' => ['required'],
-            'email' => ['required', 'email'],
+            'token'    => ['required'],
+            'email'    => ['required', 'email'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $firebase = $this->firebase;
+        // Retrieve the stored token record from Firebase
+        $record = $this->firebase->getPasswordResetToken($request->email);
 
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function (User $user) use ($request, $firebase) {
-                $newRememberToken = Str::random(60);
+        if (!$record) {
+            return back()->withInput($request->only('email'))
+                ->withErrors(['email' => __('passwords.token')]);
+        }
 
-                // Save updated password to Firebase (our real user store)
-                $existingData = $firebase->getUser($user->getAuthIdentifier());
-                if ($existingData) {
-                    $existingData['password'] = Hash::make($request->password);
-                    $existingData['remember_token'] = $newRememberToken;
-                    $firebase->saveUser($user->getAuthIdentifier(), $existingData);
-                }
+        // Tokens expire after 60 minutes
+        $createdAt = \Carbon\Carbon::parse($record['created_at']);
+        if ($createdAt->addMinutes(60)->isPast()) {
+            $this->firebase->deletePasswordResetToken($request->email);
+            return back()->withInput($request->only('email'))
+                ->withErrors(['email' => __('passwords.token')]);
+        }
 
-                // Also keep the in-memory model up to date for the event
-                $user->forceFill([
-                    'remember_token' => $newRememberToken,
-                ]);
+        // Verify token hash
+        if (!hash_equals($record['token'], hash('sha256', $request->token))) {
+            return back()->withInput($request->only('email'))
+                ->withErrors(['email' => __('passwords.token')]);
+        }
 
-                event(new PasswordReset($user));
-            }
-        );
+        // Token is valid — find the user and update password in Firebase
+        $userData = $this->firebase->getUserByEmail($request->email);
+        if (!$userData) {
+            return back()->withInput($request->only('email'))
+                ->withErrors(['email' => __('passwords.user')]);
+        }
 
-        return $status == Password::PASSWORD_RESET
-                    ? redirect()->route('login')->with('status', __($status))
-                    : back()->withInput($request->only('email'))
-                        ->withErrors(['email' => __($status)]);
+        $userData['password']       = Hash::make($request->password);
+        $userData['remember_token'] = Str::random(60);
+        $this->firebase->saveUser($userData['id'], $userData);
+
+        // Clean up the used token
+        $this->firebase->deletePasswordResetToken($request->email);
+
+        // Fire the PasswordReset event using a User model instance
+        $user = new \App\Models\User();
+        $user->forceFill($userData);
+        $user->exists = true;
+        event(new PasswordReset($user));
+
+        return redirect()->route('login')->with('status', __('passwords.reset'));
     }
 }

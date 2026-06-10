@@ -3,13 +3,22 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\PasswordResetMail;
+use App\Services\FirebaseService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class PasswordResetLinkController extends Controller
 {
+    protected $firebase;
+
+    public function __construct(FirebaseService $firebase)
+    {
+        $this->firebase = $firebase;
+    }
+
     /**
      * Display the password reset link request view.
      */
@@ -20,8 +29,7 @@ class PasswordResetLinkController extends Controller
 
     /**
      * Handle an incoming password reset link request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
+     * Stores the token in Firebase instead of the SQLite password_reset_tokens table.
      */
     public function store(Request $request): RedirectResponse
     {
@@ -29,16 +37,27 @@ class PasswordResetLinkController extends Controller
             'email' => ['required', 'email'],
         ]);
 
-        // We will send the password reset link to this user. Once we have attempted
-        // to send the link, we will examine the response then see the message we
-        // need to show to the user. Finally, we'll send out a proper response.
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        // Check the user exists in Firebase
+        $user = $this->firebase->getUserByEmail($request->email);
+        if (!$user) {
+            // Return same success message to avoid email enumeration
+            return back()->with('status', __('passwords.sent'));
+        }
 
-        return $status == Password::RESET_LINK_SENT
-                    ? back()->with('status', __($status))
-                    : back()->withInput($request->only('email'))
-                        ->withErrors(['email' => __($status)]);
+        // Generate a plain token and store its hash in Firebase
+        $token = Str::random(64);
+        $this->firebase->savePasswordResetToken($request->email, $token);
+
+        // Build the reset URL
+        $resetUrl = url(route('password.reset', [
+            'token' => $token,
+            'email' => $request->email,
+        ], false));
+
+        // Send email
+        \Illuminate\Support\Facades\Mail::to($request->email)
+            ->send(new PasswordResetMail($resetUrl, $user['name'] ?? 'User'));
+
+        return back()->with('status', __('passwords.sent'));
     }
 }
