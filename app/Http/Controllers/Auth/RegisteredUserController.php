@@ -56,7 +56,9 @@ class RegisteredUserController extends Controller
 
         $firebase->saveUser($userId, $userData);
 
-        $user = new \Illuminate\Auth\GenericUser($userData);
+        $user = new \App\Models\User();
+        $user->forceFill($userData);
+        $user->exists = true;
 
         event(new Registered($user));
 

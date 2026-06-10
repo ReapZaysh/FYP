@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\FirebaseService;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,6 +16,13 @@ use Illuminate\View\View;
 
 class NewPasswordController extends Controller
 {
+    protected $firebase;
+
+    public function __construct(FirebaseService $firebase)
+    {
+        $this->firebase = $firebase;
+    }
+
     /**
      * Display the password reset view.
      */
@@ -36,24 +44,30 @@ class NewPasswordController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        // Here we will attempt to reset the user's password. If it is successful we
-        // will update the password on an actual user model and persist it to the
-        // database. Otherwise we will parse the error and return the response.
+        $firebase = $this->firebase;
+
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
-            function (User $user) use ($request) {
+            function (User $user) use ($request, $firebase) {
+                $newRememberToken = Str::random(60);
+
+                // Save updated password to Firebase (our real user store)
+                $existingData = $firebase->getUser($user->getAuthIdentifier());
+                if ($existingData) {
+                    $existingData['password'] = Hash::make($request->password);
+                    $existingData['remember_token'] = $newRememberToken;
+                    $firebase->saveUser($user->getAuthIdentifier(), $existingData);
+                }
+
+                // Also keep the in-memory model up to date for the event
                 $user->forceFill([
-                    'password' => Hash::make($request->password),
-                    'remember_token' => Str::random(60),
-                ])->save();
+                    'remember_token' => $newRememberToken,
+                ]);
 
                 event(new PasswordReset($user));
             }
         );
 
-        // If the password was successfully reset, we will redirect the user back to
-        // the application's home authenticated view. If there is an error we can
-        // redirect them back to where they came from with their error message.
         return $status == Password::PASSWORD_RESET
                     ? redirect()->route('login')->with('status', __($status))
                     : back()->withInput($request->only('email'))

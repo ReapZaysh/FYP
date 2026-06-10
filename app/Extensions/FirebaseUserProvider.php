@@ -22,7 +22,10 @@ class FirebaseUserProvider implements UserProvider
         $userData = $this->firebase->getUser($identifier);
         if ($userData) {
             $userData['remember_token'] = $userData['remember_token'] ?? null;
-            return new GenericUser($userData);
+            $user = new \App\Models\User();
+            $user->forceFill($userData);
+            $user->exists = true;
+            return $user;
         }
         return null;
     }
@@ -49,7 +52,10 @@ class FirebaseUserProvider implements UserProvider
         $user = $this->firebase->getUserByEmail($credentials['email']);
         if ($user) {
             $user['remember_token'] = $user['remember_token'] ?? null;
-            return new GenericUser($user);
+            $userModel = new \App\Models\User();
+            $userModel->forceFill($user);
+            $userModel->exists = true;
+            return $userModel;
         }
         return null;
     }

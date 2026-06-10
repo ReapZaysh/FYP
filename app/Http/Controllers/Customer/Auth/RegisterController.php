@@ -110,7 +110,9 @@ class RegisterController extends Controller
         session()->forget('verify_email');
 
         // Log the user in
-        $user = new \Illuminate\Auth\GenericUser($userData);
+        $user = new \App\Models\User();
+        $user->forceFill($userData);
+        $user->exists = true;
         event(new Registered($user));
         Auth::login($user);
 
