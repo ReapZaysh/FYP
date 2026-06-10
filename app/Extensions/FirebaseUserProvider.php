@@ -49,20 +49,35 @@ class FirebaseUserProvider implements UserProvider
             return null;
         }
 
+        \Illuminate\Support\Facades\Log::info('========== CUSTOMER LOGIN DEBUG ==========');
+        \Illuminate\Support\Facades\Log::info('Attempting login for email: ' . ($credentials['email'] ?? 'N/A'));
+
         $user = $this->firebase->getUserByEmail($credentials['email']);
+
         if ($user) {
+            \Illuminate\Support\Facades\Log::info('User found in Firebase. ID: ' . ($user['id'] ?? 'NO ID') . ', Role: ' . ($user['role'] ?? 'NO ROLE'));
             $user['remember_token'] = $user['remember_token'] ?? null;
             $userModel = new \App\Models\User();
             $userModel->forceFill($user);
             $userModel->exists = true;
             return $userModel;
         }
+
+        \Illuminate\Support\Facades\Log::warning('No user found in Firebase for email: ' . ($credentials['email'] ?? 'N/A'));
+        \Illuminate\Support\Facades\Log::info('==========================================');
         return null;
     }
 
     public function validateCredentials(Authenticatable $user, array $credentials)
     {
-        return Hash::check($credentials['password'], $user->getAuthPassword());
+        $plain = $credentials['password'] ?? '';
+        $hashed = $user->getAuthPassword();
+        $result = Hash::check($plain, $hashed);
+
+        \Illuminate\Support\Facades\Log::info('Password check result: ' . ($result ? 'PASS' : 'FAIL') . ' for user ID: ' . $user->getAuthIdentifier());
+        \Illuminate\Support\Facades\Log::info('==========================================');
+
+        return $result;
     }
 
     public function rehashPasswordIfRequired(Authenticatable $user, array $credentials, bool $force = false)
